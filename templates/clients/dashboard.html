@@ -1,0 +1,178 @@
+{% extends "clients/base.html" %}
+{% block title %}لوحة التحكم - {{ client.full_name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .dash-header h1 { margin: 0 0 4px; font-size: 1.3rem; color: var(--color-navy); }
+  .dash-header__meta { display: flex; gap: 14px; font-size: 0.85rem; color: var(--color-text-muted); flex-wrap: wrap; }
+  .badge-alert {
+    background: var(--color-gold);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .dash-section h2 {
+    margin: 0 0 12px;
+    font-size: 1rem;
+    color: var(--color-navy);
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 8px;
+  }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.9rem;
+  }
+  .list li:last-child { border-bottom: none; }
+  .list li.unread { position: relative; padding-right: 14px; }
+  .list li.unread::before {
+    content: '';
+    position: absolute;
+    right: 0; top: 16px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--color-gold);
+  }
+  .muted { color: var(--color-text-muted); font-size: 0.8rem; }
+  .empty { color: var(--color-text-muted); font-size: 0.88rem; margin: 0; }
+  @media (min-width: 700px) {
+    .dash-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1000px) {
+    .dash-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dash-header card">
+  <div class="dash-header__info">
+    <h1>مرحبًا، {{ client.full_name }}</h1>
+    <div class="dash-header__meta">
+      <span>كود العميل: {{ client.client_code }}</span>
+      {% if client.phone %}<span>{{ client.phone }}</span>{% endif %}
+    </div>
+  </div>
+  {% if unread_notifications_count %}
+  <div class="badge-alert">{{ unread_notifications_count }} إشعار جديد</div>
+  {% endif %}
+</div>
+
+<div class="dash-grid">
+  <section class="card dash-section">
+    <h2>قضاياي</h2>
+    {% if cases %}
+    <ul class="list">
+      {% for case in cases %}
+      <li>
+        <strong>{{ case.title }}</strong>
+        <span class="muted">{{ case.court }} — {{ case.status }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty">لا توجد قضايا مرئية حاليًا.</p>
+    {% endif %}
+  </section>
+
+  <section class="card dash-section">
+    <h2>أحدث المستندات</h2>
+    {% if files %}
+    <ul class="list">
+      {% for f in files %}
+      <li>
+        <strong>{{ f.display_name }}</strong>
+        <span class="muted">{{ f.created_at|date:"Y-m-d" }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty">لا توجد مستندات بعد.</p>
+    {% endif %}
+  </section>
+
+  <section class="card dash-section">
+    <h2>الفواتير</h2>
+    {% if invoices %}
+    <ul class="list">
+      {% for inv in invoices %}
+      <li>
+        <strong>فاتورة {{ inv.invoice_num }}</strong>
+        <span class="muted">{{ inv.amount }} ج.م — {{ inv.status }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty">لا توجد فواتير.</p>
+    {% endif %}
+  </section>
+
+  <section class="card dash-section">
+    <h2>الاستشارات</h2>
+    {% if consultations %}
+    <ul class="list">
+      {% for c in consultations %}
+      <li>
+        <strong>{{ c.subject }}</strong>
+        <span class="muted">{{ c.status }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty">لا توجد استشارات مرسلة.</p>
+    {% endif %}
+  </section>
+
+  <section class="card dash-section">
+    <h2>الإشعارات</h2>
+    {% if notifications %}
+    <ul class="list">
+      {% for n in notifications %}
+      <li class="{% if not n.is_read %}unread{% endif %}">
+        <strong>{{ n.title }}</strong>
+        <span class="muted">{{ n.created_at|date:"Y-m-d" }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty">لا توجد إشعارات.</p>
+    {% endif %}
+  </section>
+
+  <section class="card dash-section">
+    <h2>التوكيلات</h2>
+    {% if powers_of_attorney %}
+    <ul class="list">
+      {% for poa in powers_of_attorney %}
+      <li>
+        <strong>{{ poa.title }}</strong>
+        <span class="muted">{{ poa.poa_number }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty">لا توجد توكيلات مسجّلة.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "clients/base.html" %}
+{% block title %}تسجيل الدخول - بوابة العميل{% endblock %}
+
+{% block extra_head %}
+<style>
+  .login-wrap {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  .login-title { margin: 0 0 6px; font-size: 1.4rem; color: var(--color-navy); }
+  .login-sub { color: var(--color-text-muted); font-size: 0.88rem; margin: 0 0 20px; }
+  .form-group { text-align: right; margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 0.85rem; margin-bottom: 6px; color: var(--color-text); font-weight: 600; }
+  .form-group input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: #fbfcfd;
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--color-gold);
+    box-shadow: 0 0 0 3px rgba(184,146,90,0.15);
+  }
+  .btn-primary {
+    width: 100%;
+    padding: 12px;
+    background: var(--color-navy);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: var(--color-navy-light); }
+  .alert-error {
+    background: #fdecea;
+    color: var(--color-danger);
+    border: 1px solid #f5c6c0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    margin-bottom: 16px;
+    text-align: right;
+  }
+  @media (min-width: 600px) {
+    .login-wrap { min-height: calc(100vh - 220px); }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrap">
+  <div class="login-card card">
+    <h1 class="login-title">تسجيل الدخول</h1>
+    <p class="login-sub">أدخل بيانات حسابك للوصول إلى ملفك وقضاياك ومستنداتك.</p>
+
+    {% if error %}
+    <div class="alert-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="username">اسم المستخدم</label>
+        <input type="text" id="username" name="username" value="{{ posted_username|default:'' }}" required autofocus autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="password">كلمة المرور</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-primary">دخول</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "clients/base.html" %}
+{% block title %}{{ case.title }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .case-header { margin-bottom: 20px; }
+  .case-header h1 { margin: 0 0 6px; font-size: 1.3rem; color: var(--color-navy); }
+  .case-header .muted { font-size: 0.9rem; color: var(--color-text-muted); }
+  .section { margin-bottom: 18px; }
+  .section h2 { font-size: 1rem; color: var(--color-navy); border-bottom: 2px solid var(--color-border); padding-bottom: 8px; margin: 0 0 12px; }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { padding: 10px 0; border-bottom: 1px solid var(--color-border); font-size: 0.9rem; }
+  .list li:last-child { border-bottom: none; }
+  .muted { color: var(--color-text-muted); font-size: 0.82rem; }
+  .empty { color: var(--color-text-muted); font-size: 0.88rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card case-header">
+  <h1>{{ case.title }}</h1>
+  <div class="muted">
+    رقم القضية: {{ case.case_number }} —
+    {{ case.court }}{% if case.circuit %} / {{ case.circuit }}{% endif %} —
+    الحالة: {{ case.status }}
+  </div>
+</div>
+
+<div class="card section">
+  <h2>أطراف القضية</h2>
+  {% if parties %}
+  <ul class="list">
+    {% for p in parties %}
+    <li><strong>{{ p.full_name }}</strong> — {{ p.party_type }}{% if p.organization %} ({{ p.organization }}){% endif %}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">لا توجد بيانات أطراف متاحة للعرض.</p>
+  {% endif %}
+</div>
+
+<div class="card section">
+  <h2>الفواتير المرتبطة بالقضية</h2>
+  {% if invoices %}
+  <ul class="list">
+    {% for inv in invoices %}
+    <li>فاتورة {{ inv.invoice_num }} — {{ inv.amount }} ج.م — {{ inv.status }}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">لا توجد فواتير مرتبطة بهذه القضية.</p>
+  {% endif %}
+</div>
+
+<div class="card section">
+  <h2>مستندات</h2>
+  {% if files %}
+  <ul class="list">
+    {% for f in files %}
+    <li>
+      <div style="display:flex; align-items:center; gap:12px;">
+        {% if f.is_image %}
+        <img class="thumb" src="{{ f.thumb_url }}" alt="{{ f.display_name }}" onclick="openLightbox('{{ f.full_url }}')">
+        {% endif %}
+        <a href="{{ f.gdrive_url }}" target="_blank" rel="noopener">{{ f.display_name }}</a>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">لا توجد مستندات.</p>
+  {% endif %}
+</div>
+{% endblock %}

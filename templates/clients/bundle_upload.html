@@ -1,0 +1,443 @@
+{% extends "clients/base.html" %}
+{% block title %}رفع مستندات{% endblock %}
+
+{% block extra_head %}
+<style>
+  :root {
+    --youth-purple: #7c3aed;
+    --youth-pink: #ec4899;
+    --youth-blue: #3b82f6;
+    --youth-cyan: #06b6d4;
+    --youth-lime: #84cc16;
+    --youth-orange: #f97316;
+    --youth-yellow: #facc15;
+  }
+
+  .upload-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 10px 4px 40px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+  }
+
+  /* ===== Header ===== */
+  .upload-header {
+    position: relative;
+    border-radius: 22px;
+    padding: 32px 28px;
+    margin-bottom: 22px;
+    background: linear-gradient(135deg, #7c3aed 0%, #ec4899 50%, #f97316 100%);
+    color: #fff;
+    overflow: hidden;
+    box-shadow: 0 14px 40px -12px rgba(124, 58, 237, 0.55);
+  }
+  .upload-header::before {
+    content: '';
+    position: absolute;
+    width: 260px; height: 260px;
+    background: rgba(255,255,255,0.14);
+    border-radius: 50%;
+    top: -110px; left: -60px;
+  }
+  .upload-header::after {
+    content: '';
+    position: absolute;
+    width: 180px; height: 180px;
+    background: rgba(255,255,255,0.10);
+    border-radius: 50%;
+    bottom: -90px; right: -40px;
+  }
+  .upload-header .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(6px);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: 0.3px;
+  }
+  .upload-header h1 {
+    margin: 0 0 8px;
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+  }
+  .upload-header p {
+    margin: 0;
+    font-size: 0.92rem;
+    opacity: 0.92;
+    position: relative;
+    z-index: 1;
+    line-height: 1.6;
+  }
+
+  /* ===== Card ===== */
+  .upload-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px 26px;
+    border: 1px solid #eef0f6;
+    box-shadow: 0 10px 30px -14px rgba(15, 23, 42, 0.12);
+    position: relative;
+    overflow: hidden;
+  }
+  .upload-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; left: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #7c3aed, #ec4899, #f97316, #facc15);
+    background-size: 300% 100%;
+    animation: slideGrad 6s linear infinite;
+  }
+  @keyframes slideGrad {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  /* ===== Field ===== */
+  .field { margin-bottom: 22px; }
+  .field-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 10px;
+  }
+  .field-label .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    box-shadow: 0 0 0 4px rgba(124,58,237,0.12);
+  }
+  .field-label .opt {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #94a3b8;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .text-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e5e9f2;
+    border-radius: 14px;
+    font-size: 0.92rem;
+    box-sizing: border-box;
+    transition: all 0.25s ease;
+    background: #fafbff;
+    color: #1e293b;
+    outline: none;
+  }
+  .text-input::placeholder { color: #a5aec1; }
+  .text-input:focus {
+    border-color: #7c3aed;
+    background: #fff;
+    box-shadow: 0 0 0 5px rgba(124, 58, 237, 0.10);
+  }
+
+  /* ===== Drop Zone ===== */
+  .drop-zone {
+    position: relative;
+    border: 2px dashed #c7cfe0;
+    border-radius: 18px;
+    padding: 34px 20px;
+    text-align: center;
+    background: linear-gradient(180deg, #fafbff 0%, #f5f3ff 100%);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  .drop-zone:hover {
+    border-color: #7c3aed;
+    background: linear-gradient(180deg, #f5f3ff 0%, #ede9fe 100%);
+    transform: translateY(-2px);
+  }
+  .drop-zone.dragover {
+    border-color: #ec4899;
+    background: linear-gradient(180deg, #fdf2f8 0%, #ede9fe 100%);
+    box-shadow: 0 0 0 6px rgba(236, 72, 153, 0.10);
+    transform: scale(1.01);
+  }
+  .drop-zone input[type=file] {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .dz-icon {
+    width: 66px; height: 66px;
+    margin: 0 auto 14px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #7c3aed 0%, #ec4899 60%, #f97316 100%);
+    color: #fff;
+    box-shadow: 0 10px 24px -8px rgba(124, 58, 237, 0.6);
+    animation: floatY 3.2s ease-in-out infinite;
+  }
+  .dz-icon svg { width: 32px; height: 32px; }
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .dz-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 4px;
+  }
+  .dz-title span {
+    background: linear-gradient(90deg, #7c3aed, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .dz-sub {
+    font-size: 0.82rem;
+    color: #7b849a;
+  }
+
+  /* ===== File chips ===== */
+  .file-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+    justify-content: center;
+  }
+  .file-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid #e5e9f2;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    color: #334155;
+    max-width: 100%;
+    box-shadow: 0 2px 6px -2px rgba(15,23,42,0.08);
+    animation: popIn 0.25s ease;
+  }
+  .file-chip::before {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    flex-shrink: 0;
+  }
+  .file-chip .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 180px;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* ===== Hint ===== */
+  .hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: #64748b;
+    background: #f8fafc;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border-right: 3px solid #06b6d4;
+    line-height: 1.6;
+  }
+  .hint svg { flex-shrink: 0; color: #06b6d4; margin-top: 2px; }
+
+  /* ===== Button ===== */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 26px;
+  }
+  .btn-submit {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+    color: #fff;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 24px -8px rgba(124, 58, 237, 0.65);
+    transition: all 0.25s ease;
+    overflow: hidden;
+    letter-spacing: 0.2px;
+  }
+  .btn-submit::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px -8px rgba(236, 72, 153, 0.7);
+  }
+  .btn-submit:hover::after { opacity: 1; }
+  .btn-submit:active { transform: translateY(0); }
+  .btn-submit > * { position: relative; z-index: 1; }
+  .btn-submit svg { width: 18px; height: 18px; }
+
+  .btn-hint {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  @media (max-width: 640px) {
+    .upload-header { padding: 24px 20px; }
+    .upload-header h1 { font-size: 1.35rem; }
+    .upload-card { padding: 22px 18px; }
+    .btn-submit { width: 100%; justify-content: center; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="upload-wrap">
+
+  <!-- Header -->
+  <div class="upload-header">
+    <span class="badge">✨ مساحة الرفع الذكية</span>
+    <h1>رفع المستندات</h1>
+    <p>ارفع ملفاتك بسرعة وسهولة — يمكنك سحبها وإفلاتها مباشرة أو اختيارها من جهازك.</p>
+  </div>
+
+  <!-- Form -->
+  <form class="upload-card" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Folder name -->
+    <div class="field">
+      <label class="field-label" for="folder_name">
+        <span class="dot"></span>
+        اسم المجلد
+        <span class="opt">اختياري</span>
+      </label>
+      <input type="text" id="folder_name" name="folder_name" class="text-input" placeholder="مثال: مستندات القضية">
+    </div>
+
+    <!-- Files drop zone -->
+    <div class="field">
+      <label class="field-label">
+        <span class="dot"></span>
+        الملفات
+      </label>
+
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="files" name="files" multiple required>
+        <div class="dz-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <div class="dz-title">اسحب الملفات هنا أو <span>تصفّح</span></div>
+        <div class="dz-sub">يمكنك اختيار أكثر من ملف في نفس الوقت</div>
+        <div class="file-list" id="fileList"></div>
+      </div>
+
+      <div class="hint">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <span>الحد الأقصى للحجم لكل ملف وفق إعدادات النظام. تُدعَم معظم صيغ المستندات الشائعة.</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="btn-row">
+      <button class="btn-submit" type="submit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <span>ابدأ الرفع</span>
+      </button>
+      <span class="btn-hint">سيتم رفع جميع الملفات المحددة دفعة واحدة.</span>
+    </div>
+  </form>
+</div>
+
+<script>
+  (function () {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('files');
+    const fileList = document.getElementById('fileList');
+
+    function renderFiles() {
+      fileList.innerHTML = '';
+      Array.from(fileInput.files).forEach(function (f) {
+        const chip = document.createElement('div');
+        chip.className = 'file-chip';
+        const name = document.createElement('span');
+        name.className = 'name';
+        name.textContent = f.name;
+        chip.appendChild(name);
+        fileList.appendChild(chip);
+      });
+    }
+
+    fileInput.addEventListener('change', renderFiles);
+
+    ['dragenter', 'dragover'].forEach(function (evt) {
+      dropZone.addEventListener(evt, function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(function (evt) {
+      dropZone.addEventListener(evt, function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      });
+    });
+
+    dropZone.addEventListener('drop', function (e) {
+      const dt = e.dataTransfer;
+      if (dt && dt.files && dt.files.length) {
+        fileInput.files = dt.files;
+        renderFiles();
+      }
+    });
+  })();
+</script>
+{% endblock %}

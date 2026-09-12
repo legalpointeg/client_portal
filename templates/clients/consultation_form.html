@@ -1,0 +1,40 @@
+{% extends "clients/base.html" %}
+{% block title %}استشارة جديدة{% endblock %}
+
+{% block extra_head %}
+<style>
+  .page-header { margin-bottom: 20px; }
+  .page-header h1 { margin: 0; font-size: 1.3rem; color: var(--color-navy); }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: var(--color-navy); }
+  .form-group input[type=text], .form-group textarea {
+    width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: 6px; font-size: 0.9rem; box-sizing: border-box;
+  }
+  .form-group textarea { min-height: 140px; resize: vertical; }
+  .checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .btn-submit { background: var(--color-navy); color: #fff; padding: 10px 24px; border: none; border-radius: 6px; font-size: 0.9rem; cursor: pointer; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header card">
+  <h1>استشارة جديدة</h1>
+</div>
+
+<form class="card" method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="subject">الموضوع</label>
+    <input type="text" id="subject" name="subject" required>
+  </div>
+  <div class="form-group">
+    <label for="question_text">نص الاستشارة</label>
+    <textarea id="question_text" name="question_text" required></textarea>
+  </div>
+  <div class="checkbox-row">
+    <input type="checkbox" id="is_urgent" name="is_urgent">
+    <label for="is_urgent" style="margin:0;">استشارة عاجلة</label>
+  </div>
+  <button class="btn-submit" type="submit">إرسال</button>
+</form>
+{% endblock %}

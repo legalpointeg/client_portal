@@ -1,0 +1,496 @@
+{% extends "clients/base.html" %}
+{% block title %}نتيجة الرفع{% endblock %}
+
+{% block extra_head %}
+<style>
+  :root {
+    --law-navy: #0f2547;
+    --law-navy-deep: #081729;
+    --law-gold: #c9a24a;
+    --law-gold-soft: #e6c877;
+    --law-cream: #faf7f0;
+    --law-success: #1f7a4d;
+    --law-success-bg: #eaf6ef;
+    --law-danger: #a4243b;
+    --law-danger-bg: #fbeef0;
+    --law-line: #e6e2d8;
+    --law-muted: #6b7280;
+  }
+
+  .law-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 8px 4px 48px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: var(--law-navy);
+  }
+
+  /* ================= Hero Header ================= */
+  .law-hero {
+    position: relative;
+    border-radius: 4px;
+    background: linear-gradient(135deg, var(--law-navy-deep) 0%, var(--law-navy) 100%);
+    color: #fff;
+    padding: 34px 34px 30px;
+    margin-bottom: 26px;
+    overflow: hidden;
+    box-shadow: 0 18px 40px -22px rgba(15, 37, 71, 0.55);
+  }
+  .law-hero::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(201, 162, 74, 0.35);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .law-hero::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; right: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--law-gold-soft), var(--law-gold), #8a6f24);
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .hero-emblem {
+    width: 68px; height: 68px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 30% 30%, rgba(201,162,74,0.35), rgba(201,162,74,0.08));
+    border: 1px solid rgba(201, 162, 74, 0.55);
+    flex-shrink: 0;
+    color: var(--law-gold-soft);
+    box-shadow: inset 0 0 20px rgba(201, 162, 74, 0.15);
+  }
+  .hero-emblem svg { width: 34px; height: 34px; }
+
+  .hero-text { flex: 1; min-width: 200px; }
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    color: var(--law-gold-soft);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-family: 'Georgia', serif;
+  }
+  .hero-title {
+    margin: 0 0 6px;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #fff;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    letter-spacing: 0.2px;
+  }
+  .hero-sub {
+    margin: 0;
+    font-size: 0.86rem;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.7;
+  }
+
+  /* ================= Summary Stats ================= */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--law-line);
+    border-radius: 4px;
+    padding: 18px 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; left: 0;
+    height: 3px;
+    background: var(--law-gold);
+    transform: scaleX(0.35);
+    transform-origin: center;
+    transition: transform 0.35s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 26px -16px rgba(15, 37, 71, 0.35);
+  }
+  .stat-card:hover::before { transform: scaleX(1); }
+
+  .stat-num {
+    font-family: 'Georgia', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--law-navy);
+    margin-bottom: 6px;
+  }
+  .stat-num.gold { color: var(--law-gold); }
+  .stat-num.ok { color: var(--law-success); }
+  .stat-num.fail { color: var(--law-danger); }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--law-muted);
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  /* ================= Results Panel ================= */
+  .panel {
+    background: #fff;
+    border: 1px solid var(--law-line);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px -22px rgba(15, 37, 71, 0.35);
+    margin-bottom: 24px;
+  }
+  .panel-head {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--law-line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: linear-gradient(180deg, #fff 0%, var(--law-cream) 100%);
+  }
+  .panel-head h2 {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--law-navy);
+    font-family: 'Georgia', serif;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .panel-head h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 18px;
+    background: var(--law-gold);
+    border-radius: 2px;
+  }
+  .panel-count {
+    font-size: 0.76rem;
+    color: var(--law-muted);
+    background: #fff;
+    border: 1px solid var(--law-line);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  /* ================= Result List ================= */
+  .result-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .result-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 22px;
+    border-bottom: 1px solid var(--law-line);
+    font-size: 0.9rem;
+    transition: background 0.2s ease;
+    animation: rowIn 0.4s ease both;
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-item:hover { background: #fcfbf8; }
+
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateX(8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .status-icon {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .status-icon svg { width: 18px; height: 18px; }
+
+  .ok .status-icon {
+    background: var(--law-success-bg);
+    color: var(--law-success);
+    box-shadow: 0 0 0 1px rgba(31, 122, 77, 0.18);
+  }
+  .fail .status-icon {
+    background: var(--law-danger-bg);
+    color: var(--law-danger);
+    box-shadow: 0 0 0 1px rgba(164, 36, 59, 0.18);
+  }
+
+  .item-body { flex: 1; min-width: 0; }
+  .item-name {
+    font-weight: 600;
+    color: var(--law-navy);
+    margin-bottom: 2px;
+    word-break: break-word;
+  }
+  .item-note {
+    font-size: 0.78rem;
+    color: var(--law-muted);
+    line-height: 1.5;
+  }
+  .item-note.error {
+    color: var(--law-danger);
+    background: var(--law-danger-bg);
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-top: 3px;
+  }
+
+  .status-tag {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    border: 1px solid transparent;
+  }
+  .ok .status-tag {
+    background: var(--law-success-bg);
+    color: var(--law-success);
+    border-color: rgba(31, 122, 77, 0.2);
+  }
+  .fail .status-tag {
+    background: var(--law-danger-bg);
+    color: var(--law-danger);
+    border-color: rgba(164, 36, 59, 0.2);
+  }
+
+  /* ================= Actions ================= */
+  .actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .btn-law {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 26px;
+    border-radius: 3px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.4px;
+    transition: all 0.25s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-law svg { width: 16px; height: 16px; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--law-navy) 0%, var(--law-navy-deep) 100%);
+    color: #fff;
+    box-shadow: 0 10px 24px -14px rgba(15, 37, 71, 0.7);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px -12px rgba(15, 37, 71, 0.8);
+    border-color: var(--law-gold);
+  }
+
+  .btn-outline {
+    background: #fff;
+    color: var(--law-navy);
+    border: 1px solid var(--law-line);
+  }
+  .btn-outline:hover {
+    border-color: var(--law-gold);
+    color: var(--law-navy);
+    background: var(--law-cream);
+    transform: translateY(-2px);
+  }
+
+  /* ================= Footer Signature ================= */
+  .law-footer {
+    margin-top: 30px;
+    padding-top: 18px;
+    border-top: 1px solid var(--law-line);
+    text-align: center;
+    font-size: 0.74rem;
+    color: var(--law-muted);
+    letter-spacing: 1px;
+    font-family: 'Georgia', serif;
+  }
+  .law-footer .gold { color: var(--law-gold); }
+
+  /* ================= Empty state ================= */
+  .empty-state {
+    text-align: center;
+    padding: 46px 24px;
+    color: var(--law-muted);
+    font-size: 0.9rem;
+  }
+  .empty-state svg {
+    width: 42px; height: 42px;
+    color: var(--law-gold);
+    opacity: 0.6;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 640px) {
+    .law-hero { padding: 26px 22px; }
+    .hero-title { font-size: 1.25rem; }
+    .stats-row { grid-template-columns: 1fr; }
+    .result-item { padding: 13px 16px; gap: 10px; }
+    .status-tag { display: none; }
+    .btn-law { width: 100%; justify-content: center; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="law-wrap">
+
+  <!-- ============ Hero ============ -->
+  <div class="law-hero">
+    <div class="hero-inner">
+      <div class="hero-emblem" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v18"/>
+          <path d="M5 8h14"/>
+          <path d="M7 8l-2 6a3 3 0 0 0 6 0L9 8"/>
+          <path d="M17 8l-2 6a3 3 0 0 0 6 0l-2-6"/>
+          <path d="M8 21h8"/>
+        </svg>
+      </div>
+      <div class="hero-text">
+        <span class="hero-eyebrow">تقرير الإجراء</span>
+        <h1 class="hero-title">نتيجة رفع المستندات</h1>
+        <p class="hero-sub">تمت معالجة الطلب بنجاح — فيما يلي تفصيل حالة كل ملف تم إرساله إلى الخادم.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Summary Stats ============ -->
+  {% with total=results|length %}
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num gold">{{ total }}</div>
+      <div class="stat-label">إجمالي الملفات</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num ok">
+        {% with ok_count=0 %}{% for r in results %}{% if r.ok %}{{ forloop.counter }}{% endif %}{% endfor %}{% endwith %}
+        {% for r in results %}{% if r.ok %}{{ forloop.counter|add:"0" }}{% endif %}{% endfor %}
+      </div>
+      <div class="stat-label">تم الرفع بنجاح</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num fail">
+        {% for r in results %}{% if not r.ok %}{{ forloop.counter|add:"0" }}{% endif %}{% endfor %}
+      </div>
+      <div class="stat-label">ملفات فشلت</div>
+    </div>
+  </div>
+  {% endwith %}
+
+  <!-- ============ Results Panel ============ -->
+  <div class="panel">
+    <div class="panel-head">
+      <h2>تفاصيل الملفات</h2>
+      <span class="panel-count">{{ results|length }} ملف</span>
+    </div>
+
+    {% if results %}
+    <ul class="result-list">
+      {% for r in results %}
+      <li class="result-item {% if r.ok %}ok{% else %}fail{% endif %}">
+
+        <div class="status-icon">
+          {% if r.ok %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          {% else %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          {% endif %}
+        </div>
+
+        <div class="item-body">
+          <div class="item-name">{{ r.name }}</div>
+          {% if r.ok %}
+            <div class="item-note">تم تخزين الملف بنجاح في مساحة المستندات الخاصة بك.</div>
+          {% else %}
+            <div class="item-note">تعذّر رفع الملف. الرجاء التحقق من الصيغة أو الحجم والمحاولة مجددًا.</div>
+            {% if r.error %}<div class="item-note error">{{ r.error }}</div>{% endif %}
+          {% endif %}
+        </div>
+
+        <span class="status-tag">
+          {% if r.ok %}ناجح{% else %}فاشل{% endif %}
+        </span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <div>لا توجد نتائج لعرضها.</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ============ Actions ============ -->
+  <div class="actions">
+    <a class="btn-law btn-primary" href="{% url 'clients:files_list' %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+      العودة إلى مستنداتي
+    </a>
+    <a class="btn-law btn-outline" href="javascript:history.back()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      رفع ملفات أخرى
+    </a>
+  </div>
+
+  <!-- ============ Footer Signature ============ -->
+  <div class="law-footer">
+    <span class="gold">◆</span>&nbsp;&nbsp;نظام إدارة المستندات — مكاتب المحاماة&nbsp;&nbsp;<span class="gold">◆</span>
+  </div>
+
+</div>
+{% endblock %}

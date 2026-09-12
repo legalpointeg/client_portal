@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}بوابة العميل{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-navy: #0f2942;
+    --color-navy-light: #1c3f5e;
+    --color-gold: #b8925a;
+    --color-bg: #f4f6f8;
+    --color-card: #ffffff;
+    --color-border: #e2e6ea;
+    --color-text: #232a31;
+    --color-text-muted: #6b7680;
+    --color-danger: #c0392b;
+    --radius: 12px;
+    --shadow: 0 2px 12px rgba(15, 41, 66, 0.08);
+    --max-width: 1100px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Cairo', -apple-system, 'Segoe UI', Tahoma, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.7;
+  }
+  a { color: inherit; text-decoration: none; }
+  .topbar {
+    background: var(--color-navy);
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar__brand {
+    font-weight: 700;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .topbar__brand span.dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--color-gold);
+    display: inline-block;
+  }
+  .topbar__user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+  }
+  .btn-logout {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.35);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-logout:hover { background: rgba(255,255,255,0.12); }
+  .page-wrap {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+  .card {
+    background: var(--color-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    border: 1px solid var(--color-border);
+  }
+  footer.site-footer {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    padding: 24px 16px;
+  }
+  @media (max-width: 599px) {
+    .topbar { padding: 12px 14px; }
+    .topbar__brand { font-size: 1rem; }
+    .page-wrap { padding: 16px 12px 40px; }
+  }
+
+  .thumb {
+    width: 56px; height: 56px; border-radius: 6px; object-fit: cover;
+    cursor: pointer; border: 1px solid var(--color-border); flex-shrink: 0;
+  }
+  .lightbox {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+    z-index: 1000; align-items: center; justify-content: center;
+    overflow: hidden; touch-action: none;
+  }
+  .lightbox.active { display: flex; }
+  .lightbox-stage {
+    width: 100%; height: 100%; display: flex; align-items: center;
+    justify-content: center; cursor: zoom-in;
+  }
+  .lightbox-stage.zoomed { cursor: grab; }
+  .lightbox-stage.dragging { cursor: grabbing; }
+  .lightbox img {
+    max-width: 92vw; max-height: 92vh; object-fit: contain;
+    user-select: none; -webkit-user-drag: none;
+    transform-origin: center center;
+    transition: transform 0.05s linear;
+  }
+  .lightbox-close {
+    position: absolute; top: 16px; left: 16px; color: #fff; font-size: 2rem;
+    cursor: pointer; line-height: 1; background: none; border: none; z-index: 1001;
+  }
+  .lightbox-hint {
+    position: absolute; bottom: 16px; color: rgba(255,255,255,0.6);
+    font-size: 0.78rem; z-index: 1001;
+  }
+  .lightbox-zoom-controls {
+    position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 12px; z-index: 1001;
+  }
+  .lightbox-zoom-btn {
+    width: 44px; height: 44px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,0.15); color: #fff; font-size: 1.5rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+  .lightbox-zoom-btn:active { background: rgba(255,255,255,0.3); }
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__brand"><span class="dot"></span> بوابة العميل</div>
+    {% if user.is_authenticated %}
+    <div class="topbar__user">
+      <span>{{ user.full_name|default:user.username }}</span>
+      <form action="{% url 'clients:logout' %}" method="post" style="margin:0;">
+        {% csrf_token %}
+        <button type="submit" class="btn-logout">تسجيل الخروج</button>
+      </form>
+    </div>
+    {% endif %}
+  </header>
+
+  <div class="page-wrap">
+    {% block content %}{% endblock %}
+  </div>
+
+  <footer class="site-footer">© {% now "Y" %} جميع الحقوق محفوظة</footer>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+    <div class="lightbox-stage" id="lightboxStage">
+      <img id="lightbox-img" src="" alt="">
+    </div>
+    <div class="lightbox-zoom-controls">
+      <button type="button" class="lightbox-zoom-btn" onclick="zoomLightbox(-0.4)">&minus;</button>
+      <button type="button" class="lightbox-zoom-btn" onclick="zoomLightbox(0.4)">+</button>
+    </div>
+    <div class="lightbox-hint">اسحب للتحريك — دبل كليك أو زر − للرجوع لحجمها الطبيعي</div>
+  </div>
+
+  <script>
+  (function() {
+    var stage = null, img = null, scale = 1, minScale = 1, maxScale = 4;
+    var originX = 0, originY = 0, startX = 0, startY = 0;
+    var isDragging = false, lastDist = null;
+
+    function resetZoom() {
+      scale = 1; originX = 0; originY = 0;
+      applyTransform();
+      stage.classList.remove('zoomed');
+    }
+
+    function applyTransform() {
+      img.style.transform = 'translate(' + originX + 'px,' + originY + 'px) scale(' + scale + ')';
+    }
+
+    function clampScale(s) {
+      return Math.min(maxScale, Math.max(minScale, s));
+    }
+
+    window.openLightbox = function(url) {
+      var lb = document.getElementById('lightbox');
+      stage = document.getElementById('lightboxStage');
+      img = document.getElementById('lightbox-img');
+      img.src = url;
+      resetZoom();
+      lb.classList.add('active');
+    };
+
+    window.zoomLightbox = function(delta) {
+      if (!stage || !img) return;
+      scale = clampScale(scale + delta);
+      stage.classList.toggle('zoomed', scale > 1);
+      applyTransform();
+    };
+
+    window.closeLightbox = function(e) {
+      if (e) e.stopPropagation();
+      document.getElementById('lightbox').classList.remove('active');
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      stage = document.getElementById('lightboxStage');
+      img = document.getElementById('lightbox-img');
+      var lb = document.getElementById('lightbox');
+
+      lb.addEventListener('click', function(e) {
+        if (e.target === lb) closeLightbox();
+      });
+
+      stage.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        var delta = e.deltaY < 0 ? 0.2 : -0.2;
+        scale = clampScale(scale + delta);
+        stage.classList.toggle('zoomed', scale > 1);
+        applyTransform();
+      }, { passive: false });
+
+      img.addEventListener('dblclick', function(e) {
+        e.stopPropagation();
+        resetZoom();
+      });
+
+      stage.addEventListener('mousedown', function(e) {
+        if (scale <= 1) return;
+        isDragging = true;
+        stage.classList.add('dragging');
+        startX = e.clientX - originX;
+        startY = e.clientY - originY;
+      });
+      window.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        originX = e.clientX - startX;
+        originY = e.clientY - startY;
+        applyTransform();
+      });
+      window.addEventListener('mouseup', function() {
+        isDragging = false;
+        stage.classList.remove('dragging');
+      });
+
+      function touchDist(t) {
+        var dx = t[0].clientX - t[1].clientX;
+        var dy = t[0].clientY - t[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+
+      stage.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 2) {
+          lastDist = touchDist(e.touches);
+        } else if (e.touches.length === 1 && scale > 1) {
+          isDragging = true;
+          startX = e.touches[0].clientX - originX;
+          startY = e.touches[0].clientY - originY;
+        }
+      }, { passive: true });
+
+      stage.addEventListener('touchmove', function(e) {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          var d = touchDist(e.touches);
+          if (lastDist) {
+            var delta = (d - lastDist) * 0.01;
+            scale = clampScale(scale + delta);
+            stage.classList.toggle('zoomed', scale > 1);
+            applyTransform();
+          }
+          lastDist = d;
+        } else if (e.touches.length === 1 && isDragging) {
+          originX = e.touches[0].clientX - startX;
+          originY = e.touches[0].clientY - startY;
+          applyTransform();
+        }
+      }, { passive: false });
+
+      stage.addEventListener('touchend', function(e) {
+        if (e.touches.length < 2) lastDist = null;
+        if (e.touches.length === 0) isDragging = false;
+      });
+    });
+  })();
+  </script>
+</body>
+</html>

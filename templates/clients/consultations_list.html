@@ -1,0 +1,39 @@
+{% extends "clients/base.html" %}
+{% block title %}الاستشارات{% endblock %}
+
+{% block extra_head %}
+<style>
+  .page-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .page-header h1 { margin: 0; font-size: 1.3rem; color: var(--color-navy); }
+  .btn-new { background: var(--color-navy); color: #fff; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { padding: 12px 0; border-bottom: 1px solid var(--color-border); font-size: 0.9rem; }
+  .list li:last-child { border-bottom: none; }
+  .muted { color: var(--color-text-muted); font-size: 0.82rem; }
+  .empty { color: var(--color-text-muted); font-size: 0.9rem; }
+  .urgent { color: var(--color-gold); font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header card">
+  <h1>الاستشارات</h1>
+  <a class="btn-new" href="{% url 'clients:consultation_create' %}">استشارة جديدة</a>
+</div>
+
+<div class="card">
+  {% if consultations %}
+  <ul class="list">
+    {% for c in consultations %}
+    <li>
+      <strong>{{ c.subject }}</strong>{% if c.is_urgent %} <span class="urgent">(عاجلة)</span>{% endif %}
+      <div class="muted">{{ c.status }} — {{ c.created_at|date:"Y-m-d" }}</div>
+      {% if c.admin_reply %}<div class="muted">الرد: {{ c.admin_reply }}</div>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">لم ترسل أي استشارات بعد.</p>
+  {% endif %}
+</div>
+{% endblock %}

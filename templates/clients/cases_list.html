@@ -1,0 +1,39 @@
+{% extends "clients/base.html" %}
+{% block title %}قضاياي{% endblock %}
+
+{% block extra_head %}
+<style>
+  .page-header { margin-bottom: 20px; }
+  .page-header h1 { margin: 0; font-size: 1.3rem; color: var(--color-navy); }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { padding: 14px 0; border-bottom: 1px solid var(--color-border); }
+  .list li:last-child { border-bottom: none; }
+  .list li a { text-decoration: none; color: inherit; display: block; }
+  .list li strong { display: block; margin-bottom: 4px; color: var(--color-navy); }
+  .muted { color: var(--color-text-muted); font-size: 0.85rem; }
+  .empty { color: var(--color-text-muted); font-size: 0.9rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header card">
+  <h1>قضاياي</h1>
+</div>
+
+<div class="card">
+  {% if links %}
+  <ul class="list">
+    {% for link in links %}
+    <li>
+      <a href="{% url 'clients:case_detail' link.case.id %}">
+        <strong>{{ link.case.title }}</strong>
+        <span class="muted">{{ link.case.court }} — {{ link.case.status }} — فُتحت في {{ link.case.opened_date|date:"Y-m-d" }}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">لا توجد قضايا مرئية لك حاليًا.</p>
+  {% endif %}
+</div>
+{% endblock %}

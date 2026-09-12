@@ -1,0 +1,15 @@
+﻿*.bak_*
+cookies.txt
+*.pdf
+__pycache__/
+*.pyc
+db.sqlite3
+�����_*.txt
+���_*.py
+���_*.py
+generate_token_manual.py
+test_upload.py
+
+�����_��������/
+الملفات_المرفوعة/
+الفحص_والإعداد/

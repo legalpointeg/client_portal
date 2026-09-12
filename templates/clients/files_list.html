@@ -1,0 +1,1582 @@
+{% extends "clients/base.html" %}
+{% block title %}مستنداتي{% endblock %}
+
+{% block extra_head %}
+<style>
+  :root {
+    --law-navy: #0f2547;
+    --law-navy-deep: #081729;
+    --law-gold: #c9a24a;
+    --law-gold-soft: #e6c877;
+    --law-cream: #faf7f0;
+    --law-line: #e6e2d8;
+    --law-muted: #6b7280;
+  }
+
+  .law-wrap {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 8px 10px 48px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: var(--law-navy);
+  }
+
+  /* ================= Hero ================= */
+  .law-hero {
+    position: relative;
+    border-radius: 14px;
+    background: linear-gradient(120deg, var(--law-navy-deep) 0%, var(--law-navy) 55%, #1b3a63 100%);
+    color: #fff;
+    padding: 26px 30px;
+    margin-bottom: 18px;
+    overflow: hidden;
+    box-shadow: 0 18px 42px -22px rgba(15, 37, 71, 0.6);
+  }
+  .law-hero::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(201, 162, 74, 0.28);
+    border-radius: 8px;
+    pointer-events: none;
+  }
+  .law-hero::after {
+    content: '';
+    position: absolute;
+    top: -50%; right: -8%;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(201,162,74,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .hero-emblem {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 30% 30%, rgba(201,162,74,0.35), rgba(201,162,74,0.06));
+    border: 1px solid rgba(201, 162, 74, 0.55);
+    flex-shrink: 0;
+    color: var(--law-gold-soft);
+  }
+  .hero-emblem svg { width: 28px; height: 28px; }
+  .hero-text { flex: 1; min-width: 180px; }
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.66rem;
+    letter-spacing: 3px;
+    color: var(--law-gold-soft);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-family: 'Georgia', serif;
+  }
+  .hero-title {
+    margin: 0 0 3px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+    font-family: 'Georgia', 'Times New Roman', serif;
+  }
+  .hero-sub {
+    margin: 0;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.55;
+  }
+
+  /* ================= Toolbar ================= */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 11px 14px;
+    margin-bottom: 20px;
+    background: #fff;
+    border: 1px solid var(--law-line);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px -20px rgba(15, 37, 71, 0.4);
+    position: sticky;
+    top: 8px;
+    z-index: 40;
+  }
+  .toolbar-label {
+    font-size: 0.76rem;
+    color: var(--law-muted);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .toolbar-label svg { width: 14px; height: 14px; opacity: 0.65; }
+
+  .toggle-group {
+    display: inline-flex;
+    background: var(--law-cream);
+    border: 1px solid var(--law-line);
+    border-radius: 10px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px;
+    border: none;
+    background: transparent;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--law-muted);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    font-family: inherit;
+  }
+  .toggle-btn svg { width: 15px; height: 15px; }
+  .toggle-btn:hover { color: var(--law-navy); }
+  .toggle-btn.active {
+    background: linear-gradient(135deg, var(--law-navy) 0%, var(--law-navy-deep) 100%);
+    color: #fff;
+    box-shadow: 0 6px 16px -8px rgba(15, 37, 71, 0.6);
+  }
+  .toggle-btn.active svg { color: var(--law-gold-soft); }
+
+  .toolbar-spacer { flex: 1; }
+
+  .btn-upload {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--law-gold) 0%, var(--law-gold-soft) 100%);
+    color: var(--law-navy-deep);
+    padding: 9px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.83rem;
+    font-weight: 800;
+    transition: all 0.25s ease;
+    border: 1px solid var(--law-gold-soft);
+    box-shadow: 0 10px 24px -12px rgba(201, 162, 74, 0.75);
+    flex-shrink: 0;
+  }
+  .btn-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px -10px rgba(201, 162, 74, 0.95);
+  }
+  .btn-upload svg { width: 14px; height: 14px; }
+
+  /* ================= Folder Section ================= */
+  .folder-section { margin-bottom: 30px; }
+
+  .folder-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 0 4px;
+  }
+  .folder-bar h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--law-navy);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Georgia', serif;
+  }
+  .folder-bar h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 18px;
+    background: linear-gradient(180deg, var(--law-gold-soft), var(--law-gold));
+    border-radius: 2px;
+  }
+  .folder-bar .count {
+    font-size: 0.72rem;
+    color: var(--law-muted);
+    background: #fff;
+    border: 1px solid var(--law-line);
+    padding: 3px 11px;
+    border-radius: 999px;
+    font-weight: 700;
+  }
+
+  /* =====================================================
+     MASONRY GRID
+     ===================================================== */
+  .grid {
+    column-count: 5;
+    column-gap: 14px;
+  }
+  @media (max-width: 1400px) { .grid { column-count: 4; } }
+  @media (max-width: 1050px) { .grid { column-count: 3; } }
+  @media (max-width: 720px)  { .grid { column-count: 2; } }
+  @media (max-width: 420px)  { .grid { column-count: 2; column-gap: 8px; } }
+
+  .grid.compact { column-count: 8; }
+  @media (max-width: 1400px) { .grid.compact { column-count: 6; } }
+  @media (max-width: 1050px) { .grid.compact { column-count: 5; } }
+  @media (max-width: 720px)  { .grid.compact { column-count: 3; } }
+  @media (max-width: 420px)  { .grid.compact { column-count: 3; column-gap: 6px; } }
+
+  .grid.large { column-count: 3; }
+  @media (max-width: 1400px) { .grid.large { column-count: 3; } }
+  @media (max-width: 1050px) { .grid.large { column-count: 2; } }
+  @media (max-width: 720px)  { .grid.large { column-count: 2; } }
+  @media (max-width: 420px)  { .grid.large { column-count: 1; } }
+
+  /* ================= Card ================= */
+  .card {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 14px;
+    cursor: pointer;
+    transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .grid.compact .card { margin-bottom: 8px; }
+  .grid.large   .card { margin-bottom: 20px; }
+  .card:hover { transform: translateY(-3px); }
+
+  .card-thumb {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #efe9dc 0%, #dfd6bf 100%);
+    border: 1px solid var(--law-line);
+    box-shadow: 0 10px 24px -20px rgba(15, 37, 71, 0.5);
+    transition: all 0.3s ease;
+    line-height: 0;
+  }
+  .card:hover .card-thumb {
+    box-shadow: 0 16px 36px -18px rgba(15, 37, 71, 0.55);
+    border-color: var(--law-gold);
+  }
+
+  .card-thumb img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .card:hover .card-thumb img { transform: scale(1.06); }
+
+  .card-thumb .thumb-fallback {
+    aspect-ratio: 4 / 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--law-cream) 0%, #ece5d2 100%);
+    color: var(--law-navy);
+  }
+  .card-thumb .thumb-fallback svg { width: 42px; height: 42px; opacity: 0.55; }
+  .card-thumb .thumb-fallback .ext {
+    font-family: 'Georgia', serif;
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: var(--law-gold);
+  }
+
+  .card-thumb::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(8,23,41,0) 50%, rgba(8,23,41,0.75) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .card:hover .card-thumb::after { opacity: 1; }
+
+  .zoom-hint {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.85);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    color: var(--law-navy-deep);
+    background: var(--law-gold-soft);
+    border-radius: 999px;
+    opacity: 0;
+    transition: all 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+    box-shadow: 0 8px 22px -8px rgba(0,0,0,0.5);
+    white-space: nowrap;
+  }
+  .card:hover .zoom-hint { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .zoom-hint svg { width: 13px; height: 13px; }
+
+  .badge-date {
+    position: absolute;
+    bottom: 8px; left: 8px;
+    z-index: 2;
+    background: rgba(8, 23, 41, 0.85);
+    color: #fff;
+    font-size: 0.64rem;
+    font-weight: 700;
+    padding: 3px 7px;
+    border-radius: 5px;
+    letter-spacing: 0.4px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(201, 162, 74, 0.4);
+    line-height: 1.4;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 8px;
+    padding: 8px 3px 0;
+    line-height: 1.4;
+  }
+  .card-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--law-navy) 0%, var(--law-navy-deep) 100%);
+    color: var(--law-gold-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 800;
+    font-family: 'Georgia', serif;
+    border: 1px solid rgba(201, 162, 74, 0.35);
+  }
+  .card-info { flex: 1; min-width: 0; }
+  .card-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--law-navy);
+    margin: 0 0 2px;
+    line-height: 1.32;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+    text-decoration: none;
+  }
+  .card-title:hover { color: var(--law-gold); }
+  .card-sub {
+    font-size: 0.68rem;
+    color: var(--law-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .card-sub svg { width: 10px; height: 10px; opacity: 0.7; }
+  .card-sub .dot {
+    width: 2px; height: 2px;
+    background: var(--law-muted);
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+
+  .grid.compact .card-title { font-size: 0.72rem; }
+  .grid.compact .card-avatar { width: 22px; height: 22px; font-size: 0.54rem; }
+  .grid.compact .card-sub { font-size: 0.62rem; }
+  .grid.compact .badge-date { font-size: 0.58rem; padding: 2px 6px; }
+  .grid.compact .zoom-hint { font-size: 0.66rem; padding: 6px 10px; }
+
+  .grid.large .card-title { font-size: 0.92rem; }
+  .grid.large .card-avatar { width: 32px; height: 32px; font-size: 0.7rem; }
+
+  .grid.no-titles .card-meta { display: none; }
+  .grid.no-titles .card { margin-bottom: 14px; }
+
+  /* ================= Empty ================= */
+  .empty-state {
+    text-align: center;
+    padding: 70px 24px;
+    background: #fff;
+    border: 1px solid var(--law-line);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px -22px rgba(15, 37, 71, 0.35);
+  }
+  .empty-emblem {
+    width: 84px; height: 84px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 30% 30%, rgba(201,162,74,0.22), rgba(201,162,74,0.04));
+    border: 1px solid rgba(201, 162, 74, 0.35);
+    color: var(--law-gold);
+  }
+  .empty-emblem svg { width: 40px; height: 40px; }
+  .empty-title {
+    font-family: 'Georgia', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--law-navy);
+    margin-bottom: 8px;
+  }
+  .empty-text {
+    font-size: 0.9rem;
+    color: var(--law-muted);
+    max-width: 400px;
+    margin: 0 auto 22px;
+    line-height: 1.7;
+  }
+  .empty-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--law-navy);
+    color: #fff;
+    padding: 12px 26px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 700;
+    transition: all 0.25s ease;
+    border: 1px solid var(--law-navy);
+    box-shadow: 0 12px 28px -16px rgba(15, 37, 71, 0.65);
+  }
+  .empty-cta:hover {
+    background: var(--law-gold);
+    border-color: var(--law-gold);
+    color: var(--law-navy-deep);
+    transform: translateY(-2px);
+  }
+  .empty-cta svg { width: 16px; height: 16px; }
+
+  /* =====================================================
+     LIGHTBOX
+     ===================================================== */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 12, 22, 0.97);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    overflow: hidden;
+    animation: fadeIn 0.22s ease;
+    user-select: none;
+    touch-action: none;
+  }
+  .lightbox.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .lb-stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    overflow: hidden;
+  }
+  .lb-stage.grabbing { cursor: grabbing; }
+
+  .lb-img {
+    max-width: 92vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 30px 90px -20px rgba(0,0,0,0.95), 0 0 0 1px rgba(201, 162, 74, 0.4);
+    transform-origin: center center;
+    transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .lb-img.no-transition { transition: none; }
+
+  .lb-topbar {
+    position: absolute;
+    top: 0; right: 0; left: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: linear-gradient(180deg, rgba(8,23,41,0.85) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .lb-topbar > * { pointer-events: auto; }
+
+  .lb-filename {
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    max-width: 60vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(201, 162, 74, 0.3);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+  }
+
+  .lb-close {
+    color: var(--law-gold-soft);
+    font-size: 1.4rem;
+    cursor: pointer;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201, 162, 74, 0.4);
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    font-family: inherit;
+    line-height: 1;
+  }
+  .lb-close:hover {
+    background: var(--law-gold);
+    color: var(--law-navy-deep);
+    transform: rotate(90deg);
+  }
+
+  .lb-bottombar {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    background: rgba(8, 23, 41, 0.85);
+    border: 1px solid rgba(201, 162, 74, 0.35);
+    border-radius: 999px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 40px -18px rgba(0,0,0,0.9);
+  }
+
+  .lb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; height: 40px;
+    border: none;
+    background: transparent;
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  .lb-btn:hover { background: rgba(201, 162, 74, 0.25); color: var(--law-gold-soft); }
+  .lb-btn:active { transform: scale(0.92); }
+  .lb-btn svg { width: 18px; height: 18px; }
+
+  .lb-divider {
+    width: 1px; height: 22px;
+    background: rgba(201, 162, 74, 0.35);
+    margin: 0 4px;
+  }
+  .lb-zoom-display {
+    min-width: 56px;
+    text-align: center;
+    color: var(--law-gold-soft);
+    font-size: 0.8rem;
+    font-weight: 800;
+    font-family: 'Georgia', serif;
+    letter-spacing: 0.5px;
+    padding: 0 6px;
+  }
+
+  .lb-hint {
+    position: absolute;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.75);
+    font-size: 0.76rem;
+    padding: 8px 16px;
+    background: rgba(8, 23, 41, 0.7);
+    border: 1px solid rgba(201, 162, 74, 0.3);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    white-space: nowrap;
+    animation: hintFade 4s ease forwards;
+    pointer-events: none;
+  }
+  @keyframes hintFade {
+    0% { opacity: 0; transform: translate(-50%, 10px); }
+    15% { opacity: 1; transform: translate(-50%, 0); }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* ================= Footer ================= */
+  .law-footer {
+    margin-top: 34px;
+    padding-top: 20px;
+    border-top: 1px solid var(--law-line);
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--law-muted);
+    letter-spacing: 1px;
+    font-family: 'Georgia', serif;
+  }
+  .law-footer .gold { color: var(--law-gold); }
+
+  /* ================= Bundle ================= */
+  .bundle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid var(--law-line);
+    color: var(--law-navy);
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  .bundle-btn svg { width: 13px; height: 13px; }
+  .bundle-btn:hover { border-color: var(--law-gold); color: var(--law-gold); }
+  .bundle-btn:disabled { opacity: 0.6; cursor: default; }
+  .bundle-btn.loading svg { animation: bundleSpin 0.8s linear infinite; }
+  @keyframes bundleSpin { to { transform: rotate(360deg); } }
+
+  .bundle-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--law-navy-deep);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    box-shadow: 0 10px 24px -8px rgba(0,0,0,0.4);
+    z-index: 200;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+  }
+  .bundle-toast.show { opacity: 1; transform: translateY(0); }
+  .bundle-toast.error { background: #7a2323; }
+
+  @media (max-width: 720px) {
+    .bundle-btn-label { display: none; }
+    .law-hero { padding: 20px; border-radius: 12px; }
+    .hero-title { font-size: 1.15rem; }
+    .toolbar { padding: 9px 10px; gap: 8px; }
+    .toggle-btn { padding: 6px 9px; font-size: 0.74rem; }
+    .toggle-btn span { display: none; }
+    .toolbar-label span { display: none; }
+    .lb-filename { max-width: 55vw; font-size: 0.78rem; }
+    .lb-bottombar { bottom: 14px; padding: 6px; gap: 3px; }
+    .lb-btn { width: 36px; height: 36px; }
+    .lb-zoom-display { min-width: 46px; font-size: 0.74rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="law-wrap">
+
+  <!-- Hero -->
+  <div class="law-hero">
+    <div class="hero-inner">
+      <div class="hero-emblem" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <div class="hero-text">
+        <span class="hero-eyebrow">الأرشيف الإلكتروني</span>
+        <h1 class="hero-title">مستنداتي</h1>
+        <p class="hero-sub">عرض شبكي حر بأحجام طبيعية — اضغط أي صورة للتكبير والتنقل.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <span class="toolbar-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1"/>
+        <rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/>
+        <rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      <span>العرض</span>
+    </span>
+
+    <div class="toggle-group" role="group" aria-label="حجم العرض">
+      <button type="button" class="toggle-btn" data-size="large" title="كبير">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
+        <span>كبير</span>
+      </button>
+      <button type="button" class="toggle-btn active" data-size="medium" title="متوسط">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/><rect x="19" y="3" width="2" height="2"/></svg>
+        <span>متوسط</span>
+      </button>
+      <button type="button" class="toggle-btn" data-size="compact" title="مصغّر">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="4" height="4"/><rect x="9" y="3" width="4" height="4"/><rect x="15" y="3" width="4" height="4"/><rect x="3" y="9" width="4" height="4"/><rect x="9" y="9" width="4" height="4"/><rect x="15" y="9" width="4" height="4"/><rect x="3" y="15" width="4" height="4"/><rect x="9" y="15" width="4" height="4"/><rect x="15" y="15" width="4" height="4"/></svg>
+        <span>مصغّر</span>
+      </button>
+    </div>
+
+    <span class="toolbar-label" style="margin-inline-start: 8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/>
+      </svg>
+      <span>العنوان</span>
+    </span>
+
+    <div class="toggle-group" role="group" aria-label="إظهار العنوان">
+      <button type="button" class="toggle-btn active" data-titles="on" title="مع عنوان">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>مع عنوان</span>
+      </button>
+      <button type="button" class="toggle-btn" data-titles="off" title="بدون عنوان">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        <span>بدون عنوان</span>
+      </button>
+    </div>
+
+    <div class="toolbar-spacer"></div>
+
+    <a class="btn-upload" href="{% url 'clients:bundle_upload' %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      رفع مستندات
+    </a>
+  </div>
+
+  <!-- Folders -->
+  {% if folders %}
+    {% for folder_name, files in folders.items %}
+    <section class="folder-section">
+      <div class="folder-bar">
+        <h2>{{ folder_name }}</h2>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="count">{{ files|length }} ملف</span>
+          <button type="button" class="bundle-btn" data-folder="{{ folder_name }}" onclick="downloadFolderBundle(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><line x1="10" y1="12" x2="14" y2="12"/>
+            </svg>
+            <span class="bundle-btn-label">تجميع المجلد</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid" data-grid>
+        {% for f in files %}
+        <div class="card" data-card>
+          {% if f.is_image %}
+            <div class="card-thumb" onclick="openLightbox('{{ f.full_url }}', '{{ f.display_name|escapejs }}')">
+              <img src="{{ f.thumb_url }}" alt="{{ f.display_name }}" loading="lazy">
+              <span class="zoom-hint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  <line x1="11" y1="8" x2="11" y2="14"/>
+                  <line x1="8" y1="11" x2="14" y2="11"/>
+                </svg>
+                اضغط للتكبير
+              </span>
+              <span class="badge-date">{{ f.created_at|date:"Y-m-d" }}</span>
+            </div>
+          {% else %}
+            <div class="card-thumb">
+              <div class="thumb-fallback">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                <span class="ext">مستند</span>
+              </div>
+              <span class="badge-date">{{ f.created_at|date:"Y-m-d" }}</span>
+            </div>
+          {% endif %}
+
+          <div class="card-meta">
+            <div class="card-avatar">{{ folder_name|slice:":2" }}</div>
+            <div class="card-info">
+              <a href="{{ f.gdrive_url }}" target="_blank" rel="noopener" class="card-title">{{ f.display_name }}</a>
+              <div class="card-sub">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>{{ f.created_at|date:"Y-m-d" }}</span>
+                <span class="dot"></span>
+                <span>{{ folder_name }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-emblem" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          <line x1="12" y1="11" x2="12" y2="17"/>
+          <line x1="9" y1="14" x2="15" y2="14"/>
+        </svg>
+      </div>
+      <div class="empty-title">لا توجد مستندات بعد</div>
+      <p class="empty-text">ابدأ برفع أول مستند — ستظهر المصغّرات هنا في شبكة عرض عصرية قابلة للتكبير.</p>
+      <a class="empty-cta" href="{% url 'clients:bundle_upload' %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        ابدأ الرفع الآن
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="law-footer">
+    <span class="gold">◆</span>&nbsp;&nbsp;نظام إدارة المستندات — مكاتب المحاماة&nbsp;&nbsp;<span class="gold">◆</span>
+  </div>
+</div>
+
+<!-- ============ Lightbox ============ -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-topbar">
+    <button class="lb-close" type="button" onclick="closeLightbox(event)" aria-label="إغلاق">&times;</button>
+    <div class="lb-filename" id="lbFilename"></div>
+  </div>
+
+  <div class="lb-stage" id="lbStage">
+    <img class="lb-img" id="lightbox-img" src="" alt="" draggable="false">
+  </div>
+
+  <div class="lb-hint" id="lbHint">🖱️ عجلة الفأرة للتكبير • اسحب للتنقل • ESC للإغلاق</div>
+
+  <div class="lb-bottombar">
+    <button class="lb-btn" type="button" onclick="zoomOut()" title="تصغير">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+    </button>
+    <span class="lb-zoom-display" id="lbZoom">100%</span>
+    <button class="lb-btn" type="button" onclick="zoomIn()" title="تكبير">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+    </button>
+
+    <div class="lb-divider"></div>
+
+    <button class="lb-btn" type="button" onclick="resetZoom()" title="إعادة التعيين">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+    </button>
+
+    <button class="lb-btn" type="button" onclick="toggleFullscreen()" title="ملء الشاشة">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
+
+    <div class="lb-divider"></div>
+
+    <button class="lb-btn" type="button" onclick="openOriginal()" title="فتح الرابط الأصلي">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+/* =====================================================
+   تجميع المجلد
+   ===================================================== */
+function bundleToast(msg, isError) {
+  var el = document.createElement('div');
+  el.className = 'bundle-toast' + (isError ? ' error' : '');
+  el.textContent = msg;
+  document.body.appendChild(el);
+  requestAnimationFrame(function () { el.classList.add('show'); });
+  setTimeout(function () {
+    el.classList.remove('show');
+    setTimeout(function () { el.remove(); }, 300);
+  }, 2600);
+}
+
+function downloadFolderBundle(btn) {
+  var folderName = btn.dataset.folder;
+  if (!folderName || btn.disabled) return;
+
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  fetch('/folders/' + encodeURIComponent(folderName) + '/bundle/')
+    .then(function (res) {
+      if (!res.ok) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          throw new Error(data.message || 'فشل التحميل');
+        });
+      }
+      return res.blob();
+    })
+    .then(function (blob) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = folderName + '_bundle.zip';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      bundleToast('تم تحميل المجلد بنجاح');
+    })
+    .catch(function (err) {
+      bundleToast(err.message || 'فشل التحميل — أعد المحاولة', true);
+    })
+    .finally(function () {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+    });
+}
+
+/* =====================================================
+   GRID VIEW CONTROLS
+   ===================================================== */
+(function () {
+  const grids = document.querySelectorAll('[data-grid]');
+
+  const sizeBtns = document.querySelectorAll('[data-size]');
+  sizeBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const mode = btn.dataset.size;
+      sizeBtns.forEach(b => b.classList.toggle('active', b === btn));
+      grids.forEach(function (g) {
+        g.classList.remove('compact', 'large');
+        if (mode === 'compact') g.classList.add('compact');
+        if (mode === 'large') g.classList.add('large');
+      });
+      try { localStorage.setItem('docsGridSize', mode); } catch (e) {}
+    });
+  });
+
+  const titleBtns = document.querySelectorAll('[data-titles]');
+  titleBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const mode = btn.dataset.titles;
+      titleBtns.forEach(b => b.classList.toggle('active', b === btn));
+      grids.forEach(function (g) {
+        g.classList.toggle('no-titles', mode === 'off');
+      });
+      try { localStorage.setItem('docsTitlesMode', mode); } catch (e) {}
+    });
+  });
+
+  try {
+    const s = localStorage.getItem('docsGridSize');
+    if (s) { const b = document.querySelector('[data-size="' + s + '"]'); if (b) b.click(); }
+    const t = localStorage.getItem('docsTitlesMode');
+    if (t) { const b = document.querySelector('[data-titles="' + t + '"]'); if (b) b.click(); }
+  } catch (e) {}
+})();
+
+
+/* =====================================================
+   LIGHTBOX — Zoom & Pan
+   ===================================================== */
+(function () {
+  const lightbox = document.getElementById('lightbox');
+  const stage = document.getElementById('lbStage');
+  const img = document.getElementById('lightbox-img');
+  const zoomDisplay = document.getElementById('lbZoom');
+  const filenameEl = document.getElementById('lbFilename');
+  const hint = document.getElementById('lbHint');
+
+  let scale = 1;
+  let translateX = 0;
+  let translateY = 0;
+  let isDragging = false;
+  let dragStartX = 0, dragStartY = 0;
+  let startTranslateX = 0, startTranslateY = 0;
+  let currentUrl = '';
+
+  const MIN_SCALE = 0.5;
+  const MAX_SCALE = 8;
+  const ZOOM_STEP = 0.25;
+
+  function applyTransform(animated) {
+    if (!animated) img.classList.add('no-transition');
+    else img.classList.remove('no-transition');
+    img.style.transform = 'translate(' + translateX + 'px, ' + translateY + 'px) scale(' + scale + ')';
+    zoomDisplay.textContent = Math.round(scale * 100) + '%';
+    if (!animated) { void img.offsetWidth; img.classList.remove('no-transition'); }
+  }
+
+  function resetState() {
+    scale = 1; translateX = 0; translateY = 0;
+    applyTransform(true);
+  }
+
+  window.openLightbox = function (url, name) {
+    currentUrl = url;
+    img.src = url;
+    filenameEl.textContent = name || '';
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    resetState();
+    if (hint) { hint.style.animation = 'none'; void hint.offsetWidth; hint.style.animation = ''; }
+  };
+
+  window.closeLightbox = function (e) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+    img.src = '';
+    resetState();
+  };
+
+  window.zoomIn = function () { scale = Math.min(scale + ZOOM_STEP, MAX_SCALE); applyTransform(true); };
+  window.zoomOut = function () { scale = Math.max(scale - ZOOM_STEP, MIN_SCALE); applyTransform(true); };
+  window.resetZoom = function () { resetState(); };
+  window.openOriginal = function () { if (currentUrl) window.open(currentUrl, '_blank', 'noopener'); };
+  window.toggleFullscreen = function () {
+    if (!document.fullscreenElement) lightbox.requestFullscreen && lightbox.requestFullscreen();
+    else document.exitFullscreen && document.exitFullscreen();
+  };
+
+  stage.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    const rect = img.getBoundingClientRect();
+    const cx = e.clientX - rect.left - rect.width / 2;
+    const cy = e.clientY - rect.top - rect.height / 2;
+
+    const oldScale = scale;
+    const dir = e.deltaY < 0 ? 1 : -1;
+    const newScale = Math.min(Math.max(scale + dir * ZOOM_STEP, MIN_SCALE), MAX_SCALE);
+
+    if (newScale !== oldScale) {
+      const ratio = 1 - newScale / oldScale;
+      translateX += cx * ratio;
+      translateY += cy * ratio;
+      scale = newScale;
+      applyTransform(false);
+    }
+  }, { passive: false });
+
+  stage.addEventListener('mousedown', function (e) {
+    if (e.button !== 0) return;
+    isDragging = true;
+    stage.classList.add('grabbing');
+    dragStartX = e.clientX; dragStartY = e.clientY;
+    startTranslateX = translateX; startTranslateY = translateY;
+    img.classList.add('no-transition');
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', function (e) {
+    if (!isDragging) return;
+    translateX = startTranslateX + (e.clientX - dragStartX);
+    translateY = startTranslateY + (e.clientY - dragStartY);
+    applyTransform(false);
+  });
+  window.addEventListener('mouseup', function () {
+    if (!isDragging) return;
+    isDragging = false;
+    stage.classList.remove('grabbing');
+    img.classList.remove('no-transition');
+  });
+
+  let tStartDist = 0, tStartScale = 1, tStartMid = null, tStartTrans = null;
+  function dist(t1, t2) { return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY); }
+  function mid(t1, t2) { return { x: (t1.clientX + t2.clientX) / 2, y: (t1.clientY + t2.clientY) / 2 }; }
+
+  stage.addEventListener('touchstart', function (e) {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      tStartDist = dist(e.touches[0], e.touches[1]);
+      tStartScale = scale;
+      tStartMid = mid(e.touches[0], e.touches[1]);
+      tStartTrans = { x: translateX, y: translateY };
+      img.classList.add('no-transition');
+    } else if (e.touches.length === 1) {
+      isDragging = true;
+      dragStartX = e.touches[0].clientX;
+      dragStartY = e.touches[0].clientY;
+      startTranslateX = translateX;
+      startTranslateY = translateY;
+      img.classList.add('no-transition');
+    }
+  }, { passive: false });
+
+  stage.addEventListener('touchmove', function (e) {
+    if (e.touches.length === 2 && tStartMid) {
+      e.preventDefault();
+      const d = dist(e.touches[0], e.touches[1]);
+      const ratio = d / tStartDist;
+      const newScale = Math.min(Math.max(tStartScale * ratio, MIN_SCALE), MAX_SCALE);
+      const m = mid(e.touches[0], e.touches[1]);
+      const dx = m.x - tStartMid.x;
+      const dy = m.y - tStartMid.y;
+      translateX = tStartTrans.x + dx;
+      translateY = tStartTrans.y + dy;
+      scale = newScale;
+      applyTransform(false);
+    } else if (e.touches.length === 1 && isDragging) {
+      e.preventDefault();
+      translateX = startTranslateX + (e.touches[0].clientX - dragStartX);
+      translateY = startTranslateY + (e.touches[0].clientY - dragStartY);
+      applyTransform(false);
+    }
+  }, { passive: false });
+
+  stage.addEventListener('touchend', function (e) {
+    if (e.touches.length < 2) tStartMid = null;
+    if (e.touches.length === 0) { isDragging = false; img.classList.remove('no-transition'); }
+  });
+
+  stage.addEventListener('dblclick', function (e) {
+    e.preventDefault();
+    if (scale > 1.5) resetState();
+    else { scale = Math.min(scale + 1, MAX_SCALE); applyTransform(true); }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (!lightbox.classList.contains('active')) return;
+    if (e.key === 'Escape') { closeLightbox(); return; }
+    if (e.key === '+' || e.key === '=') { zoomIn(); e.preventDefault(); }
+    if (e.key === '-' || e.key === '_') { zoomOut(); e.preventDefault(); }
+    if (e.key === '0') { resetZoom(); e.preventDefault(); }
+    const step = 40;
+    if (e.key === 'ArrowLeft')  { translateX -= step; applyTransform(true); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { translateX += step; applyTransform(true); e.preventDefault(); }
+    if (e.key === 'ArrowUp')    { translateY -= step; applyTransform(true); e.preventDefault(); }
+    if (e.key === 'ArrowDown')  { translateY += step; applyTransform(true); e.preventDefault(); }
+  });
+
+  lightbox.addEventListener('click', function (e) {
+    if (e.target === lightbox || e.target === stage) closeLightbox();
+  });
+})();
+</script>
+
+<!-- =====================================================================
+     الفهرس الإداري — زر عائم + لوحة جانبية
+     الحركة الآن سلسة 60fps (translate3d + GPU) مع backdrop للعمق،
+     وpreload صامت للبيانات في الخلفية لتفادي أي reflow أثناء الفتح.
+     ===================================================================== -->
+<style>
+  .admidx-fab {
+    position: fixed; bottom: 22px; inset-inline-start: 22px; z-index: 900;
+    width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--law-navy, #0f2547) 0%, var(--law-navy-deep, #081729) 100%);
+    color: var(--law-gold-soft, #e6c877);
+    box-shadow: 0 12px 28px -10px rgba(15,37,71,0.7);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s ease;
+  }
+  .admidx-fab:hover { transform: translateY(-3px) scale(1.04); }
+  .admidx-fab svg { width: 26px; height: 26px; }
+  .admidx-fab .admidx-badge {
+    position: absolute; top: -4px; inset-inline-end: -4px;
+    background: var(--law-gold, #c9a24a); color: var(--law-navy-deep, #081729);
+    font-size: 0.65rem; font-weight: 800; min-width: 18px; height: 18px; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center; padding: 0 4px;
+  }
+
+  /* Backdrop — يعطي عمقًا ويخفي أي reflow */
+  .admidx-backdrop {
+    position: fixed; inset: 0; z-index: 940;
+    background: rgba(8, 23, 41, 0.42);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .admidx-backdrop.show { opacity: 1; pointer-events: auto; }
+
+  /* اللوحة — حركة سلسة عبر GPU */
+  .admidx-panel {
+    position: fixed;
+    top: 0; bottom: 0;
+    right: 0;                               /* فيزيائي صريح — لا التباس RTL */
+    width: min(440px, 100vw);
+    background: #fff;
+    z-index: 950;
+    box-shadow: -24px 0 60px -22px rgba(0, 0, 0, 0.45);
+    display: flex; flex-direction: column;
+    direction: rtl;
+
+    transform: translate3d(100%, 0, 0);
+    transition: transform .42s cubic-bezier(.16, 1, .3, 1);
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    pointer-events: none;
+  }
+  .admidx-panel.open {
+    transform: translate3d(0, 0, 0);
+    pointer-events: auto;
+  }
+  @media (max-width: 599px) {
+    .admidx-panel {
+      top: auto; left: 0; right: 0;
+      width: 100vw; height: 82vh;
+      border-radius: 16px 16px 0 0;
+      transform: translate3d(0, 100%, 0);
+      box-shadow: 0 -24px 60px -22px rgba(0, 0, 0, 0.45);
+    }
+    .admidx-panel.open { transform: translate3d(0, 0, 0); }
+  }
+
+  .admidx-head { padding: 14px 16px; border-bottom: 1px solid var(--law-line, #e6e2d8); display: flex; align-items: center; gap: 10px; }
+  .admidx-head h3 { margin: 0; font-size: 1rem; color: var(--law-navy, #0f2547); flex: 1; }
+  .admidx-close { border: none; background: #f2f0ea; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; line-height: 1; }
+
+  .admidx-toolbar { padding: 10px 16px; border-bottom: 1px solid var(--law-line, #e6e2d8); display: flex; flex-direction: column; gap: 8px; }
+  .admidx-search { width: 100%; padding: 9px 12px; border-radius: 9px; border: 1px solid var(--law-line, #e6e2d8); font-family: inherit; font-size: 0.85rem; }
+  .admidx-group-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .admidx-group-tab {
+    font-size: 0.72rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--law-line, #e6e2d8);
+    background: #faf7f0; cursor: pointer; color: var(--law-navy, #0f2547); font-weight: 700;
+  }
+  .admidx-group-tab.active { background: var(--law-navy, #0f2547); color: #fff; border-color: var(--law-navy, #0f2547); }
+
+  .admidx-list { flex: 1; overflow-y: auto; padding: 8px 10px 60px; }
+  .admidx-empty { text-align: center; color: var(--law-muted, #6b7280); font-size: 0.85rem; padding: 30px 10px; }
+  .admidx-group-heading { font-size: 0.78rem; font-weight: 800; color: var(--law-muted, #6b7280); margin: 12px 6px 6px; }
+  .admidx-row {
+    display: flex; gap: 8px; align-items: flex-start; padding: 8px; border-radius: 10px; border: 1px solid var(--law-line, #e6e2d8);
+    margin-bottom: 8px; background: #fff;
+  }
+  .admidx-thumb { width: 46px; height: 46px; border-radius: 6px; object-fit: cover; flex-shrink: 0; background: #eee; cursor: pointer; }
+  .admidx-thumb-fallback { width: 46px; height: 46px; border-radius: 6px; background: #f2f0ea; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--law-muted, #6b7280); }
+  .admidx-body { flex: 1; min-width: 0; }
+  .admidx-id { font-size: 0.62rem; color: var(--law-muted, #6b7280); font-family: monospace; }
+  .admidx-name-input {
+    width: 100%; border: 1px solid transparent; background: transparent; font-size: 0.82rem; font-weight: 700;
+    color: var(--law-navy, #0f2547); font-family: inherit; padding: 2px 4px; border-radius: 6px;
+  }
+  .admidx-name-input:hover, .admidx-name-input:focus { border-color: var(--law-line, #e6e2d8); background: #faf7f0; outline: none; }
+  .admidx-meta-row { display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
+  .admidx-group-select { font-size: 0.68rem; border: 1px solid var(--law-line, #e6e2d8); border-radius: 6px; padding: 2px 4px; font-family: inherit; }
+  .admidx-ocr-toggle { font-size: 0.66rem; color: var(--law-gold, #c9a24a); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
+  .admidx-ocr-text { font-size: 0.72rem; color: var(--law-muted, #6b7280); margin-top: 4px; white-space: pre-wrap; display: none; background: #faf7f0; border-radius: 6px; padding: 6px 8px; }
+  .admidx-ocr-text.shown { display: block; }
+  .admidx-status-badge { font-size: 0.62rem; padding: 1px 7px; border-radius: 999px; background: #eef4ee; color: #2f7a3d; font-weight: 700; }
+  .admidx-status-badge.not_run, .admidx-status-badge.not_applicable { background: #f2f0ea; color: var(--law-muted, #6b7280); }
+  .admidx-actions { display: flex; flex-direction: column; gap: 4px; }
+  .admidx-icon-btn { border: 1px solid var(--law-line, #e6e2d8); background: #fff; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; display: flex; align-items: center; justify-content: center; }
+  .admidx-icon-btn:hover { background: #faf7f0; }
+  .admidx-save-hint { position: fixed; bottom: 90px; inset-inline-start: 22px; background: var(--law-navy-deep, #081729); color: #fff; font-size: 0.75rem; padding: 6px 14px; border-radius: 999px; z-index: 960; opacity: 0; transition: opacity 0.25s; pointer-events: none; }
+  .admidx-save-hint.show { opacity: 1; }
+
+  .admidx-preview-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(4,12,22,0.95); z-index: 1200;
+    align-items: center; justify-content: center;
+  }
+  .admidx-preview-overlay.active { display: flex; }
+  .admidx-preview-overlay img { max-width: 90vw; max-height: 88vh; border-radius: 8px; }
+  .admidx-preview-close { position: absolute; top: 16px; inset-inline-end: 20px; color: #fff; font-size: 2rem; background: none; border: none; cursor: pointer; }
+</style>
+
+<button type="button" class="admidx-fab" id="admidxFab" title="الفهرس الإداري" onclick="admidxOpen()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+    <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+  </svg>
+  <span class="admidx-badge" id="admidxBadge" style="display:none;">0</span>
+</button>
+
+<!-- Backdrop جديد للفهرس -->
+<div class="admidx-backdrop" id="admidxBackdrop" onclick="admidxClose()"></div>
+
+<div class="admidx-panel" id="admidxPanel">
+  <div class="admidx-head">
+    <h3>الفهرس الإداري</h3>
+    <button type="button" class="admidx-close" onclick="admidxClose()">&times;</button>
+  </div>
+  <div class="admidx-toolbar">
+    <input type="text" class="admidx-search" id="admidxSearch" placeholder="ابحث بالاسم أو نص OCR أو المجموعة...">
+    <div class="admidx-group-tabs" id="admidxGroupTabs"></div>
+  </div>
+  <div class="admidx-list" id="admidxList">
+    <div class="admidx-empty">جارٍ التحميل...</div>
+  </div>
+</div>
+
+<div class="admidx-preview-overlay" id="admidxPreviewOverlay" onclick="if(event.target===this) admidxClosePreview()">
+  <button type="button" class="admidx-preview-close" onclick="admidxClosePreview()">&times;</button>
+  <img id="admidxPreviewImg" src="" alt="">
+</div>
+
+<script>
+(function () {
+  var ADMIDX_DUMMY_ID = "00000000-0000-0000-0000-000000000000";
+  var ADMIDX_ENDPOINTS = {
+    data: "{% url 'clients:files_index_data' %}",
+    renameBase: "{% url 'clients:file_rename' file_id='00000000-0000-0000-0000-000000000000' %}".replace(ADMIDX_DUMMY_ID, '__ID__'),
+    moveGroupBase: "{% url 'clients:file_move_group' file_id='00000000-0000-0000-0000-000000000000' %}".replace(ADMIDX_DUMMY_ID, '__ID__'),
+    reorder: "{% url 'clients:file_reorder' %}"
+  };
+
+  var state = { files: [], groups: [], activeGroup: 'الكل', query: '', loaded: false };
+
+  function getCsrfToken() {
+    var input = document.querySelector('input[name=csrfmiddlewaretoken]');
+    if (input) return input.value;
+    var m = document.cookie.match(/csrftoken=([^;]+)/);
+    return m ? m[1] : '';
+  }
+
+  function admidxPost(url, body) {
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+      body: JSON.stringify(body || {})
+    }).then(function (r) { return r.json(); });
+  }
+
+  /* ✅ الفتح/الإغلاق الجديد — backdrop + body lock */
+  window.admidxOpen = function () {
+    document.getElementById('admidxBackdrop').classList.add('show');
+    document.getElementById('admidxPanel').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (!state.loaded) admidxLoad();
+  };
+  window.admidxClose = function () {
+    document.getElementById('admidxBackdrop').classList.remove('show');
+    document.getElementById('admidxPanel').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  window.admidxClosePreview = function () {
+    document.getElementById('admidxPreviewOverlay').classList.remove('active');
+  };
+  window.admidxOpenPreview = function (url) {
+    var ov = document.getElementById('admidxPreviewOverlay');
+    document.getElementById('admidxPreviewImg').src = url;
+    ov.classList.add('active');
+  };
+
+  function admidxHint(msg) {
+    var el = document.createElement('div');
+    el.className = 'admidx-save-hint show';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 1800);
+  }
+
+  function admidxLoad() {
+    fetch(ADMIDX_ENDPOINTS.data).then(function (r) { return r.json(); }).then(function (data) {
+      state.files = data.files || [];
+      state.groups = data.groups || [];
+      state.loaded = true;
+      var badge = document.getElementById('admidxBadge');
+      badge.style.display = state.files.length ? 'flex' : 'none';
+      badge.textContent = state.files.length;
+      admidxRenderTabs();
+      admidxRender();
+    }).catch(function () {
+      document.getElementById('admidxList').innerHTML = '<div class="admidx-empty">تعذّر تحميل الفهرس.</div>';
+    });
+  }
+
+  function admidxRenderTabs() {
+    var wrap = document.getElementById('admidxGroupTabs');
+    var tabs = ['الكل'].concat(state.groups);
+    wrap.innerHTML = tabs.map(function (g) {
+      var active = (g === state.activeGroup) ? ' active' : '';
+      return '<button type="button" class="admidx-group-tab' + active + '" data-g="' + admidxEsc(g) + '">' + admidxEsc(g) + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(wrap.querySelectorAll('.admidx-group-tab'), function (btn) {
+      btn.addEventListener('click', function () {
+        state.activeGroup = btn.dataset.g;
+        admidxRenderTabs();
+        admidxRender();
+      });
+    });
+  }
+
+  function admidxEsc(s) {
+    return String(s || '').replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function admidxFiltered() {
+    var q = state.query.trim().toLowerCase();
+    return state.files.filter(function (f) {
+      if (state.activeGroup !== 'الكل' && f.folder_name !== state.activeGroup) return false;
+      if (!q) return true;
+      return (f.display_name || '').toLowerCase().indexOf(q) !== -1 ||
+             (f.original_name || '').toLowerCase().indexOf(q) !== -1 ||
+             (f.folder_name || '').toLowerCase().indexOf(q) !== -1 ||
+             (f.ocr_text || '').toLowerCase().indexOf(q) !== -1;
+    });
+  }
+
+  function admidxRender() {
+    var list = document.getElementById('admidxList');
+    var items = admidxFiltered();
+    if (!items.length) {
+      list.innerHTML = '<div class="admidx-empty">لا توجد نتائج مطابقة.</div>';
+      return;
+    }
+
+    var byGroup = {};
+    var order = [];
+    items.forEach(function (f) {
+      var g = f.folder_name || 'عام';
+      if (!byGroup[g]) { byGroup[g] = []; order.push(g); }
+      byGroup[g].push(f);
+    });
+
+    var html = '';
+    order.forEach(function (g) {
+      html += '<div class="admidx-group-heading">' + admidxEsc(g) + ' (' + byGroup[g].length + ')</div>';
+      byGroup[g].forEach(function (f, idx) {
+        var thumb = f.is_image && f.thumb_url
+          ? '<img class="admidx-thumb" src="' + f.thumb_url + '" onclick="admidxOpenPreview(\'' + (f.full_url || f.thumb_url) + '\')">'
+          : '<div class="admidx-thumb-fallback">ملف</div>';
+        var ocrBtn = f.ocr_text
+          ? '<button type="button" class="admidx-ocr-toggle" data-ocr-toggle="' + f.id + '">عرض OCR</button>'
+          : '<span class="admidx-ocr-toggle" style="color:#aaa;cursor:default;text-decoration:none;">لا يوجد OCR بعد</span>';
+        html += '' +
+          '<div class="admidx-row" data-id="' + f.id + '" data-group="' + admidxEsc(g) + '">' +
+            thumb +
+            '<div class="admidx-body">' +
+              '<div class="admidx-id">#' + f.id.slice(0, 8) + '</div>' +
+              '<input class="admidx-name-input" data-rename="' + f.id + '" value="' + admidxEsc(f.display_name) + '">' +
+              '<div class="admidx-meta-row">' +
+                '<select class="admidx-group-select" data-move-group="' + f.id + '">' +
+                  ['عام'].concat(state.groups.filter(function (x) { return x !== 'عام'; })).map(function (g2) {
+                    var sel = (g2 === g) ? ' selected' : '';
+                    return '<option value="' + admidxEsc(g2) + '"' + sel + '>' + admidxEsc(g2) + '</option>';
+                  }).join('') +
+                  (state.groups.indexOf(g) === -1 && g !== 'عام' ? '<option value="' + admidxEsc(g) + '" selected>' + admidxEsc(g) + '</option>' : '') +
+                '</select>' +
+                '<span class="admidx-status-badge ' + f.ocr_status + '">' + admidxEsc(f.status) + '</span>' +
+                ocrBtn +
+              '</div>' +
+              '<div class="admidx-ocr-text" id="admidx-ocr-' + f.id + '">' + admidxEsc(f.ocr_text) + '</div>' +
+            '</div>' +
+            '<div class="admidx-actions">' +
+              '<button type="button" class="admidx-icon-btn" title="تحريك لأعلى" data-move-up="' + f.id + '">&uarr;</button>' +
+              '<button type="button" class="admidx-icon-btn" title="تحريك لأسفل" data-move-down="' + f.id + '">&darr;</button>' +
+              '<a class="admidx-icon-btn" title="فتح في Drive" href="' + f.gdrive_url + '" target="_blank" rel="noopener">D</a>' +
+            '</div>' +
+          '</div>';
+      });
+    });
+    list.innerHTML = html;
+    admidxBindRowEvents(byGroup, order);
+  }
+
+  function admidxBindRowEvents(byGroup, order) {
+    var list = document.getElementById('admidxList');
+
+    Array.prototype.forEach.call(list.querySelectorAll('[data-rename]'), function (input) {
+      input.addEventListener('change', function () {
+        var id = input.dataset.rename;
+        var newName = input.value.trim();
+        if (!newName) return;
+        admidxPost(ADMIDX_ENDPOINTS.renameBase.replace('__ID__', id), { display_name: newName }).then(function (res) {
+          if (res.ok) {
+            var f = state.files.find(function (x) { return x.id === id; });
+            if (f) f.display_name = res.display_name;
+            admidxHint(res.warning || 'تم تحديث الاسم');
+          } else {
+            admidxHint(res.message || 'تعذّر تحديث الاسم');
+          }
+        });
+      });
+    });
+
+    Array.prototype.forEach.call(list.querySelectorAll('[data-move-group]'), function (sel) {
+      sel.addEventListener('change', function () {
+        var id = sel.dataset.moveGroup;
+        var newGroup = sel.value;
+        admidxPost(ADMIDX_ENDPOINTS.moveGroupBase.replace('__ID__', id), { folder_name: newGroup }).then(function (res) {
+          if (res.ok) {
+            var f = state.files.find(function (x) { return x.id === id; });
+            if (f) f.folder_name = res.folder_name;
+            admidxHint('تم النقل إلى "' + newGroup + '"');
+            admidxRender();
+          }
+        });
+      });
+    });
+
+    Array.prototype.forEach.call(list.querySelectorAll('[data-ocr-toggle]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var el = document.getElementById('admidx-ocr-' + btn.dataset.ocrToggle);
+        el.classList.toggle('shown');
+        btn.textContent = el.classList.contains('shown') ? 'إخفاء OCR' : 'عرض OCR';
+      });
+    });
+
+    function moveWithinGroup(id, dir) {
+      var row = list.querySelector('[data-id="' + id + '"]');
+      var group = row.dataset.group;
+      var groupFiles = byGroup[group];
+      var i = groupFiles.findIndex(function (x) { return x.id === id; });
+      var j = i + dir;
+      if (j < 0 || j >= groupFiles.length) return;
+      var tmp = groupFiles[i]; groupFiles[i] = groupFiles[j]; groupFiles[j] = tmp;
+      var payload = groupFiles.map(function (f, idx) { return { id: f.id, order_index: idx }; });
+      admidxPost(ADMIDX_ENDPOINTS.reorder, { order: payload }).then(function () {
+        groupFiles.forEach(function (f, idx) { f.order_index = idx; });
+        admidxRender();
+      });
+    }
+
+    Array.prototype.forEach.call(list.querySelectorAll('[data-move-up]'), function (btn) {
+      btn.addEventListener('click', function () { moveWithinGroup(btn.dataset.moveUp, -1); });
+    });
+    Array.prototype.forEach.call(list.querySelectorAll('[data-move-down]'), function (btn) {
+      btn.addEventListener('click', function () { moveWithinGroup(btn.dataset.moveDown, 1); });
+    });
+  }
+
+  document.getElementById('admidxSearch').addEventListener('input', function (e) {
+    state.query = e.target.value;
+    admidxRender();
+  });
+
+  /* ✅ Preload صامت — يجعل أول فتح فوريًا بدون reflow */
+  setTimeout(function () { if (!state.loaded) admidxLoad(); }, 900);
+
+  /* ✅ ESC يغلق اللوحة */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && document.getElementById('admidxPanel').classList.contains('open')) {
+      admidxClose();
+    }
+  });
+})();
+</script>
+{% endblock %}

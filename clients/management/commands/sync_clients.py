@@ -1,4 +1,4 @@
-"""
+﻿"""
 client_portal/clients/management/commands/sync_clients.py
 -------------------------------------------------------------
 management command بيسحب بيانات العملاء من lawfirm_portal (endpoint
@@ -8,7 +8,7 @@ bridge/portal-export/clients/) ويحدّث/ينشئ سجلات Client محلي�
     python3 manage.py sync_clients
 
 يعتمد على إعدادين في settings.py:
-    LAWFIRM_API_BASE_URL  - مثال: 'https://legalbridgeeg.pythonanywhere.com'
+    LAWFIRM_API_BASE_URL  - مثال: 'https://legalpointeg.pythonanywhere.com'
     PORTAL_SYNC_API_KEY    - نفس القيمة المضبوطة في lawfirm_portal بالظبط
 
 يستخدم urllib المدمجة في بايثون (مش مكتبة requests) عشان منحتاجش نتثبت

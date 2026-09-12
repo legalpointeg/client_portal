@@ -1,4 +1,4 @@
-import json
+﻿import json
 import os
 
 from django.http import JsonResponse
@@ -57,4 +57,4 @@ def list_client_uploads(request, client_id):
 
 
 def health_check(request):
-    return JsonResponse({"status": "ok", "service": "legalbridgeeg upload receiver"})
+    return JsonResponse({"status": "ok", "service": "legalpointeg upload receiver"})

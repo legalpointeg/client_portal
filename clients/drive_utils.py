@@ -1,4 +1,4 @@
-"""
+﻿"""
 client_portal/clients/drive_utils.py
 -------------------------------------
 وحدة رفع المستندات الموحّدة لـ Google Drive الخاصة ببوابة العميل المستقلة.
@@ -12,7 +12,7 @@ lawfirm_portal في كل مرة. ده بيحافظ على استقلالية ا�
 
 نسخة الملف مرة واحدة يدويًا:
     cp /home/Lexpoint/lawfirm_portal/secrets/owner_oauth_token.json \
-       /home/legalbridgeEG/client_portal/secrets/owner_oauth_token.json
+       /home/legalpointeg/client_portal/secrets/owner_oauth_token.json
 
 كل سيرفر بعد كده بيعمل refresh لنسخته لوحده - الـ refresh_token بتاع
 Google بيدعم أكتر من عميل (client) شغال بيه في نفس الوقت من غير تعارض.

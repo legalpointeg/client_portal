@@ -1,4 +1,4 @@
-"""
+﻿"""
 client_portal/client_portal/settings.py
 -----------------------------------------
 إعدادات Django الأساسية لمشروع بوابة العميل المستقلة.
@@ -76,7 +76,7 @@ DATABASES = {
     },
     'uploads_db': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/home/legalbridgeEG/upload_receiver/db.sqlite3',
+        'NAME': '/home/legalpointeg/upload_receiver/db.sqlite3',
     },
 }
 

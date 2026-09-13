@@ -326,3 +326,37 @@ class Admin(models.Model):
 
     def __str__(self):
         return f'{self.full_name or self.username}'
+
+
+# ============================================================
+# 11) Session — مكافئ cases.models.Session (جلسات القضايا)
+# ============================================================
+class Session(models.Model):
+    """جلسة قضائية - نسخة عرض من lawfirm_portal."""
+    id = models.UUIDField(primary_key=True, editable=False)
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name='sessions')
+    session_number = models.PositiveIntegerField('رقم الجلسة', default=1)
+    session_date = models.DateField('تاريخ الجلسة')
+    session_time = models.TimeField('وقت الجلسة', null=True, blank=True)
+    location = models.CharField('مكان الجلسة', max_length=200, blank=True)
+    result = models.CharField('نتيجة الجلسة', max_length=30, blank=True)
+    minutes = models.TextField('محضر الجلسة', blank=True)
+    ruling = models.TextField('القرار / الحكم الصادر', blank=True)
+    next_session_date = models.DateField('موعد الجلسة القادمة', null=True, blank=True)
+    postponement_reason = models.TextField('سبب التأجيل', blank=True)
+    requests = models.TextField('الطلبات المقدمة', blank=True)
+    permits = models.TextField('التصاريح المطلوبة', blank=True)
+    preparations = models.TextField('استعدادات الجلسة القادمة', blank=True)
+    obstacles = models.TextField('عقبات وتحديات', blank=True)
+    tags = models.CharField('وسوم', max_length=500, blank=True)
+    is_visible_to_client = models.BooleanField('مرئية للعميل', default=False)
+
+    synced_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'جلسة'
+        verbose_name_plural = 'الجلسات'
+        ordering = ['session_date', 'session_number']
+
+    def __str__(self):
+        return f'جلسة {self.session_number} - {self.case}'

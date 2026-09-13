@@ -296,3 +296,33 @@ class PowerOfAttorney(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# ============================================================
+# 10) Admin — مكافئ accounts.models.User (is_staff=True) فقط
+# ============================================================
+class Admin(models.Model):
+    """
+    نسخة عرض فقط من حسابات الأدمن في lawfirm_portal (is_staff=True).
+    نفس فكرة Client: بياخد نفس id السجل الأصلي، بدون منطق دخول خاص بيه هنا.
+    """
+    id = models.UUIDField(primary_key=True, editable=False)
+    username = models.CharField('اسم المستخدم', max_length=150)
+    full_name = models.CharField('الاسم الكامل', max_length=200, blank=True)
+    email = models.EmailField('البريد الإلكتروني', blank=True)
+    phone = models.CharField('رقم الهاتف', max_length=20, blank=True)
+    national_id = models.CharField('الرقم القومي', max_length=20, blank=True, default='')
+    birth_date = models.DateField('تاريخ الميلاد', null=True, blank=True)
+    address = models.TextField('العنوان', blank=True)
+    job = models.CharField('المهنة', max_length=100, blank=True)
+    is_active = models.BooleanField('نشط', default=True)
+    password_hash = models.CharField('كلمة المرور (هاش)', max_length=255, blank=True)
+
+    synced_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'أدمن'
+        verbose_name_plural = 'الأدمن'
+
+    def __str__(self):
+        return f'{self.full_name or self.username}'

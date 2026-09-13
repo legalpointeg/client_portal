@@ -15,12 +15,13 @@ SYNC_COOLDOWN_SECONDS = 300  # 5 دقايق
 
 
 def _run_sync():
-    try:
-        call_command('sync_clients')
-    except Exception:
-        # لو حصل خطأ (مثلاً السيرفر المصدر مش متاح مؤقتًا)، نتجاهله
-        # عشان منوقفش الموقع - المزامنة هتتحاول تاني في الطلب الجاي
-        pass
+    for command_name in ('sync_clients', 'sync_admins'):
+        try:
+            call_command(command_name)
+        except Exception:
+            # لو حصل خطأ (مثلاً السيرفر المصدر مش متاح مؤقتًا)، نتجاهله
+            # عشان منوقفش الموقع - المزامنة هتتحاول تاني في الطلب الجاي
+            pass
 
 
 class AutoSyncMiddleware:

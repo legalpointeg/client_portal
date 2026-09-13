@@ -391,3 +391,34 @@ class Employee(models.Model):
 
     def __str__(self):
         return f'{self.name} ({self.employee_id})'
+
+
+# ============================================================
+# 13) Lawyer — مكافئ accounts.models.User (role='lawyer') فقط
+# ============================================================
+class Lawyer(models.Model):
+    """
+    محامي زبون خارجي (role='lawyer' في lawfirm_portal) - منفصل تمامًا
+    عن Employee (الإدارات الداخلية). له علاقة اتجاهين: يقدّم طلبات (زي
+    العميل) ويُكلَّف بمهام ميدانية - النظام الفعلي لده لسه مش مبني.
+    """
+    id = models.UUIDField(primary_key=True, editable=False)
+    username = models.CharField('اسم المستخدم', max_length=150)
+    full_name = models.CharField('الاسم الكامل', max_length=200, blank=True)
+    email = models.EmailField('البريد الإلكتروني', blank=True)
+    phone = models.CharField('رقم الهاتف', max_length=20, blank=True)
+    national_id = models.CharField('الرقم القومي', max_length=20, blank=True, default='')
+    birth_date = models.DateField('تاريخ الميلاد', null=True, blank=True)
+    address = models.TextField('العنوان', blank=True)
+    job = models.CharField('المهنة', max_length=100, blank=True)
+    is_active = models.BooleanField('نشط', default=True)
+    password_hash = models.CharField('كلمة المرور (هاش)', max_length=255, blank=True)
+
+    synced_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'محامي (زبون)'
+        verbose_name_plural = 'المحامون (زبائن)'
+
+    def __str__(self):
+        return f'{self.full_name or self.username}'

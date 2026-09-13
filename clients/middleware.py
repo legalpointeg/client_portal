@@ -15,7 +15,7 @@ SYNC_COOLDOWN_SECONDS = 300  # 5 دقايق
 
 
 def _run_sync():
-    for command_name in ('sync_clients', 'sync_admins', 'sync_cases', 'sync_sessions'):
+    for command_name in ('sync_clients', 'sync_admins', 'sync_cases', 'sync_sessions', 'sync_employees'):
         try:
             call_command(command_name)
         except Exception:

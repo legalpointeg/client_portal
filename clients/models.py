@@ -360,3 +360,34 @@ class Session(models.Model):
 
     def __str__(self):
         return f'جلسة {self.session_number} - {self.case}'
+
+
+# ============================================================
+# 12) Employee — مكافئ employees.models.Employee (إدارات فنية وميدانية)
+# ============================================================
+class Employee(models.Model):
+    """
+    موظف إداري/فني/ميداني - منفصل تمامًا عن Client/Admin حتى لو دوره محامي
+    (المحامين مصنّفين كزباين، مش كموظفين، في هذا النظام).
+    id هنا رقم عادي (integer) مطابق لـ id الأصلي في lawfirm_portal، وليس UUID.
+    """
+    id = models.PositiveIntegerField(primary_key=True, editable=False)
+    employee_id = models.CharField('كود الموظف', max_length=20, blank=True, default='')
+    name = models.CharField('الاسم', max_length=200)
+    role = models.CharField('المسمى الوظيفي', max_length=50, blank=True)
+    sector_id = models.PositiveIntegerField('معرّف القطاع', null=True, blank=True)
+    department_id = models.PositiveIntegerField('معرّف القسم', null=True, blank=True)
+    bio = models.TextField('السيرة الذاتية/المهام', blank=True)
+    phone = models.CharField('الهاتف', max_length=20, blank=True)
+    email = models.EmailField('البريد الإلكتروني', blank=True)
+    is_active = models.BooleanField('نشط', default=True)
+    avatar_model = models.CharField('الأفاتار', max_length=50, blank=True, default='avatar_1')
+
+    synced_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'موظف'
+        verbose_name_plural = 'الموظفون'
+
+    def __str__(self):
+        return f'{self.name} ({self.employee_id})'

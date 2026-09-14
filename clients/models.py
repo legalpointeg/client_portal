@@ -422,3 +422,179 @@ class Lawyer(models.Model):
 
     def __str__(self):
         return f'{self.full_name or self.username}'
+
+
+# ============================================================
+# 14-18) جداول التصنيف الميداني (Taxonomy)
+# ============================================================
+class CaseSection(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False)
+    code = models.CharField(max_length=50)
+    name = models.CharField(max_length=200)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        verbose_name = 'قسم موضوعي'
+        verbose_name_plural = 'الأقسام الموضوعية'
+
+    def __str__(self):
+        return self.name
+
+
+class CourtSector(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False)
+    code = models.CharField(max_length=50)
+    name = models.CharField(max_length=200)
+    order = models.PositiveSmallIntegerField(default=0)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'قطاع ميداني'
+        verbose_name_plural = 'القطاعات الميدانية'
+
+    def __str__(self):
+        return self.name
+
+
+class CourtAuthority(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False)
+    sector = models.ForeignKey(CourtSector, on_delete=models.CASCADE, related_name='courts')
+    name = models.CharField(max_length=300)
+    authority_type = models.CharField(max_length=20, blank=True)
+    address = models.TextField(blank=True)
+    phone = models.CharField(max_length=50, blank=True)
+    working_hours = models.CharField(max_length=100, blank=True)
+    access_method = models.CharField(max_length=200, blank=True)
+    access_duration = models.CharField(max_length=100, blank=True)
+    notes = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'محكمة / هيئة'
+        verbose_name_plural = 'المحاكم والهيئات'
+
+    def __str__(self):
+        return self.name
+
+
+class CourtDivision(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False)
+    court = models.ForeignKey(CourtAuthority, on_delete=models.CASCADE, related_name='divisions')
+    name = models.CharField(max_length=300)
+    division_type = models.CharField(max_length=20, blank=True)
+    judge_name = models.CharField(max_length=200, blank=True)
+    working_hours = models.CharField(max_length=100, blank=True)
+    review_hours = models.CharField(max_length=100, blank=True)
+    location_inside = models.CharField(max_length=200, blank=True)
+    notes = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'دائرة / إدارة'
+        verbose_name_plural = 'الدوائر والإدارات'
+
+    def __str__(self):
+        return self.name
+
+
+class CourtEntity(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False)
+    division = models.ForeignKey(CourtDivision, on_delete=models.CASCADE, related_name='entities')
+    name = models.CharField(max_length=300)
+    entity_type = models.CharField(max_length=20, blank=True)
+    job_title = models.CharField(max_length=200, blank=True)
+    job_grade = models.CharField(max_length=100, blank=True)
+    phone = models.CharField(max_length=50, blank=True)
+    notes = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        verbose_name = 'جهة / موظف'
+        verbose_name_plural = 'الجهات والموظفون'
+
+    def __str__(self):
+        return self.name
+
+
+# ============================================================
+# 19) Task — الجدول الموحّد للمهام (سريعة + تنفيذية)
+# ============================================================
+class Task(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False)
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name='all_tasks')
+    kind = models.CharField(max_length=15, default='quick')
+    title = models.CharField(max_length=500)
+    status = models.CharField(max_length=15, blank=True)
+    due_date = models.DateField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+
+    session = models.ForeignKey(Session, on_delete=models.SET_NULL, null=True, blank=True, related_name='unified_tasks')
+    responsible_party = models.CharField(max_length=200, blank=True)
+
+    priority = models.CharField(max_length=10, blank=True, null=True)
+    budget = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    ai_suggested = models.BooleanField(default=False)
+    # client_id بدون FK صارم - ممكن يكون Client أو Lawyer، منخزنه كنص UUID بسيط
+    client_id = models.CharField(max_length=40, blank=True, default='')
+
+    linked_task = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='source_tasks')
+
+    sections = models.ManyToManyField(CaseSection, blank=True, related_name='tasks')
+    sectors = models.ManyToManyField(CourtSector, blank=True, related_name='tasks')
+    court_authorities = models.ManyToManyField(CourtAuthority, blank=True, related_name='tasks')
+    court_divisions = models.ManyToManyField(CourtDivision, blank=True, related_name='tasks')
+    entities = models.ManyToManyField(CourtEntity, blank=True, related_name='tasks')
+
+    synced_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'مهمة'
+        verbose_name_plural = 'المهام'
+
+    def __str__(self):
+        return self.title
+
+
+class TaskStep(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='steps')
+    title = models.CharField(max_length=400)
+    status = models.CharField(max_length=15, blank=True)
+    due_date = models.DateField(null=True, blank=True)
+    location = models.CharField(max_length=200, blank=True)
+    executor = models.CharField(max_length=200, blank=True)
+    expense = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    notes = models.TextField(blank=True)
+    order = models.PositiveSmallIntegerField(default=0)
+    created_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'خطوة'
+        verbose_name_plural = 'الخطوات'
+
+    def __str__(self):
+        return self.title
+
+
+class TaskAction(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False)
+    step = models.ForeignKey(TaskStep, on_delete=models.CASCADE, related_name='actions')
+    title = models.CharField(max_length=400)
+    type = models.CharField(max_length=10, default='action')
+    is_done = models.BooleanField(default=False)
+    due_date = models.DateField(null=True, blank=True)
+    location = models.CharField(max_length=200, blank=True)
+    expense = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    notes = models.TextField(blank=True)
+    order = models.PositiveSmallIntegerField(default=0)
+    created_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'إجراء'
+        verbose_name_plural = 'الإجراءات'
+
+    def __str__(self):
+        return self.title

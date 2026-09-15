@@ -224,6 +224,7 @@ class Consultation(models.Model):
     replied_at = models.DateTimeField('تاريخ الرد', null=True, blank=True)
     is_urgent = models.BooleanField('عاجلة', default=False)
     created_at = models.DateTimeField('تاريخ الإرسال')
+    synced_to_lawfirm = models.BooleanField('تم إرسالها لـ lawfirm_portal', default=False)
 
     class Meta:
         verbose_name = 'استشارة'
